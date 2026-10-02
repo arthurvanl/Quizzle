@@ -107,7 +107,7 @@ export const Host = () => {
         socket.emit("LOCK_ROOM", {}, (response) => {
             if (response?.success) {
                 setRoomLocked(response.locked);
-                toast.success(response.locked ? "Raum gesperrt" : "Raum entsperrt", {
+                toast.success(response.locked ? "Room locked" : "Room unlocked", {
                     duration: 2000
                 });
             }
@@ -158,7 +158,7 @@ export const Host = () => {
                                 onClick={() => setQrShown(!qrShown)}/>
                     </div>
 
-                    <p>Verbinden über die Webseite <span>{location.host.split(":")[0]}</span> mit Code:</p>
+                    <p>Connect via the website <span>{location.host.split(":")[0]}</span> with code:</p>
                     <div className="room-code-container">
                         <h2>{roomCode}</h2>
                         {roomLocked && <div className="lock-indicator">
@@ -175,7 +175,7 @@ export const Host = () => {
                         onClick={toggleRoomLock}
                         variant={roomLocked ? "secondary" : "primary"}
                     />
-                    <Button text="Starten" icon={faGamepad} padding="0.5rem 1rem" onClick={startGame}
+                    <Button text="Start" icon={faGamepad} padding="0.5rem 1rem" onClick={startGame}
                             disabled={players.length === 0}/>
                 </div>
             </div>
@@ -183,7 +183,7 @@ export const Host = () => {
 
             <motion.div className="member-info" initial={{opacity: 0, x: -100}} animate={{opacity: 1, x: 0}}>
                 <img src={titleImg} alt="Quiz Logo" className="quiz-logo"/>
-                {players.length === 0 && <h2>Warten auf Mitspieler...</h2>}
+                {players.length === 0 && <h2>Waiting for players...</h2>}
 
                 <div className="player-list">
                     {players.map(player => (
@@ -197,8 +197,8 @@ export const Host = () => {
                             role="button"
                             tabIndex={0}
                             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); kickPlayer(player); } }}
-                            aria-label={`${player.name} entfernen`}
-                            title="Klicken zum Entfernen"
+                            aria-label={`Remove ${player.name}`}
+                            title="Click to remove"
                         >
                             <div className="player-character">{getCharacterEmoji(player.character)}</div>
                             <h3>{player.name}</h3>

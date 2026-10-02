@@ -48,13 +48,13 @@ const validatePublicHttpUrl = (urlString) => {
     try {
         parsed = new URL(urlString);
     } catch {
-        throw new Error('Ungültige URL.');
+        throw new Error('Invalid URL.');
     }
     if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-        throw new Error('Nur http(s) URLs sind erlaubt.');
+        throw new Error('Only http(s) URLs are allowed.');
     }
     if (isPrivateHostname(parsed.hostname)) {
-        throw new Error('Diese URL kann aus Sicherheitsgründen nicht verarbeitet werden.');
+        throw new Error('This URL cannot be processed for security reasons.');
     }
     return parsed;
 };
@@ -69,26 +69,26 @@ const extractFromUrl = async (urlString) => {
         },
         redirect: 'follow'
     });
-    if (!response.ok) throw new Error(`URL konnte nicht geladen werden (${response.status}).`);
+    if (!response.ok) throw new Error(`Failed to load URL (${response.status}).`);
 
     const contentType = response.headers.get('content-type') || '';
     if (!/(text\/html|application\/xhtml|text\/plain|application\/xml|text\/xml)/i.test(contentType)) {
-        throw new Error('Dieser URL-Inhaltstyp wird nicht unterstützt.');
+        throw new Error('This URL content type is not supported.');
     }
 
     const raw = await response.text();
     const title = extractTitle(raw);
     const text = stripHtml(raw).slice(0, MAX_TEXT_LEN);
-    if (text.length < 80) throw new Error('Die URL enthält keinen verwertbaren Text.');
+    if (text.length < 80) throw new Error('The URL contains no usable text.');
 
     return { title: title || parsed.hostname, text, source: parsed.toString() };
 };
 
-const extractFromWikipedia = async (query, lang = 'de') => {
+const extractFromWikipedia = async (query, lang = 'en') => {
     if (!query || typeof query !== 'string' || query.trim().length < 2) {
-        throw new Error('Wikipedia-Suchbegriff ist erforderlich.');
+        throw new Error('Wikipedia search term is required.');
     }
-    const safeLang = /^[a-z]{2,8}$/i.test(lang) ? lang.toLowerCase() : 'de';
+    const safeLang = /^[a-z]{2,8}$/i.test(lang) ? lang.toLowerCase() : 'en';
 
     let pageTitle = query.trim();
     try {
@@ -103,28 +103,28 @@ const extractFromWikipedia = async (query, lang = 'de') => {
 
     const extractUrl = `https://${safeLang}.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&redirects=1&titles=${encodeURIComponent(pageTitle)}&format=json&origin=*`;
     const res = await fetch(extractUrl, { signal: AbortSignal.timeout(15000) });
-    if (!res.ok) throw new Error('Wikipedia-Artikel konnte nicht geladen werden.');
+    if (!res.ok) throw new Error('Failed to load Wikipedia article.');
     const data = await res.json();
     const pages = data?.query?.pages || {};
     const page = Object.values(pages)[0];
-    if (!page || page.missing !== undefined) throw new Error('Wikipedia-Artikel nicht gefunden.');
+    if (!page || page.missing !== undefined) throw new Error('Wikipedia article not found.');
     const text = (page.extract || '').trim().slice(0, MAX_TEXT_LEN);
-    if (text.length < 80) throw new Error('Der gefundene Artikel enthält keinen verwertbaren Text.');
+    if (text.length < 80) throw new Error('The article found contains no usable text.');
     return { title: page.title, text, source: `https://${safeLang}.wikipedia.org/wiki/${encodeURIComponent(page.title.replace(/ /g, '_'))}` };
 };
 
 const extractFromPdf = async (base64) => {
-    if (!base64 || typeof base64 !== 'string') throw new Error('PDF-Daten fehlen.');
+    if (!base64 || typeof base64 !== 'string') throw new Error('PDF data missing.');
     const cleaned = base64.replace(/^data:[^,]+,/, '');
     let buffer;
     try {
         buffer = Buffer.from(cleaned, 'base64');
     } catch {
-        throw new Error('PDF-Daten konnten nicht dekodiert werden.');
+        throw new Error('PDF data could not be decoded.');
     }
-    if (buffer.length === 0) throw new Error('PDF-Datei ist leer.');
-    if (buffer.length > 25 * 1024 * 1024) throw new Error('PDF ist zu groß (max 25 MB).');
-    if (buffer.slice(0, 4).toString() !== '%PDF') throw new Error('Datei ist keine gültige PDF.');
+    if (buffer.length === 0) throw new Error('PDF file is empty.');
+    if (buffer.length > 25 * 1024 * 1024) throw new Error('PDF is too large (max 25 MB).');
+    if (buffer.slice(0, 4).toString() !== '%PDF') throw new Error('File is not a valid PDF.');
 
     const result = await pdfParse(buffer, { max: 0 });
     const text = (result.text || '')
@@ -133,7 +133,7 @@ const extractFromPdf = async (base64) => {
         .replace(/\n\s*\n+/g, '\n\n')
         .trim()
         .slice(0, MAX_TEXT_LEN);
-    if (text.length < 80) throw new Error('Aus der PDF konnte kein verwertbarer Text extrahiert werden.');
+    if (text.length < 80) throw new Error('No usable text could be extracted from the PDF.');
     const title = (result.info?.Title || '').trim();
     return { title, text, source: 'pdf' };
 };

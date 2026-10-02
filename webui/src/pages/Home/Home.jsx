@@ -90,13 +90,13 @@ export const Home = () => {
                         setCode(code.toUpperCase());
                         setIsPracticeMode(true);
                     } else {
-                        showError(data.message || "Übungsquiz nicht gefunden");
+                        showError(data.message || "Practice quiz not found");
                     }
                 })
                 .catch(error => {
                     setLoading(false);
                     console.error('Error checking practice quiz:', error);
-                    showError("Fehler beim Überprüfen des Übungsquiz");
+                    showError("Failed to check practice quiz");
                 });
             return;
         }
@@ -108,14 +108,14 @@ export const Home = () => {
                         setCode(parseInt(code));
                         setIsPracticeMode(false);
                     } else {
-                        showError(response?.error || "Raum nicht gefunden");
+                        showError(response?.error || "Room not found");
                     }
                 });
             }).catch(() => {
-                showError("Verbindungsfehler");
+                showError("Connection error");
             });
         } else {
-            showError("Ungültiger Code");
+            showError("Invalid code");
         }
     }
 
@@ -145,7 +145,7 @@ export const Home = () => {
                     })
                     .catch((error) => {
                         setLoading(false);
-                        toast.error(error.message || "Fehler beim Beitreten");
+                        toast.error(error.message || "Failed to join");
                         reject(error);
                     });
             }
@@ -202,8 +202,8 @@ export const Home = () => {
     return (
         <div className="home-page">
             <motion.div className="legal-area" initial={{opacity: 0, y: 50}} animate={{opacity: 1, y: 0}}>
-                <a href={imprint} target="_blank" rel="noreferrer">Impressum</a>
-                <a href={privacy} target="_blank" rel="noreferrer">Datenschutz</a>
+                <a href={imprint} target="_blank" rel="noreferrer">Legal notice</a>
+                <a href={privacy} target="_blank" rel="noreferrer">Privacy</a>
                 <a href="/credits" onClick={(e) => { e.preventDefault(); navigate('/credits'); }}>Credits</a>
                 {version && <span className="version">v{version}</span>}
             </motion.div>
@@ -225,11 +225,11 @@ export const Home = () => {
                         <div className="result-area">
                             <div className="alternative">
                                 <hr/>
-                                <h2>oder</h2>
+                                <h2>or</h2>
                                 <hr/>
                             </div>
                             <Button
-                                text="Ergebnisse einsehen"
+                                text="View results"
                                 icon={faChartBar}
                                 onClick={() => setShowResultsDialog(true)}
                                 variant="secondary"
@@ -239,13 +239,13 @@ export const Home = () => {
                     )}
                 </div>
                 <div className={`action-area ${code !== null ? 'disabled' : ''}`}>
-                    <Button text="Quiz erstellen" icon={faSwatchbook} padding={"0.8rem 2.5rem"}
+                    <Button text="Create quiz" icon={faSwatchbook} padding={"0.8rem 2.5rem"}
                             disabled={code !== null}
                             onClick={() => {
                                 setCirclePosition("-30rem 0 0 -30rem");
                                 setTimeout(() => navigate("/create"), 500);
                             }}/>
-                    <Button text="Raum hosten" icon={faShareFromSquare} padding={"0.8rem 2.5rem"}
+                    <Button text="Host room" icon={faShareFromSquare} padding={"0.8rem 2.5rem"}
                             disabled={code !== null}
                             onClick={() => {
                                 setCirclePosition("-30rem 0 0 -30rem");
@@ -260,16 +260,16 @@ export const Home = () => {
                                 }}/>
                     )}
                     {!isAuthenticated && (
-                        <Button text="Anmelden" icon={faRightToBracket} padding={"0.8rem 2.5rem"} type="secondary"
+                        <Button text="Log in" icon={faRightToBracket} padding={"0.8rem 2.5rem"} type="secondary"
                                 disabled={code !== null}
                                 onClick={() => requireAuth(() => {})}/>
                     )}
                     {isAuthenticated && (
-                        <Button text="Abmelden" icon={faRightFromBracket} padding={"0.8rem 2.5rem"} type="secondary"
+                        <Button text="Log out" icon={faRightFromBracket} padding={"0.8rem 2.5rem"} type="secondary"
                                 disabled={code !== null}
                                 onClick={() => {
                                     logout();
-                                    toast.success("Abgemeldet.");
+                                    toast.success("Logged out.");
                                 }}/>
                     )}
                 </div>

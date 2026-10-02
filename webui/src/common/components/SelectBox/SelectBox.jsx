@@ -5,7 +5,7 @@ import {useState, useRef, useEffect, useCallback, useId} from "react";
 import {motion, AnimatePresence} from "framer-motion";
 import {createPortal} from "react-dom";
 
-export const SelectBox = ({value, onChange, options, placeholder = "Auswählen...", disabled = false, ariaLabel}) => {
+export const SelectBox = ({value, onChange, options, placeholder = "Select...", disabled = false, ariaLabel}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownStyle, setDropdownStyle] = useState({});
     const [focusedIndex, setFocusedIndex] = useState(-1);

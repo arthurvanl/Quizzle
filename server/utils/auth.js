@@ -51,7 +51,7 @@ const createUser = (username, password, role = 'teacher') => {
     const data = readUsers();
 
     if (data.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
-        return {error: 'Benutzername existiert bereits.'};
+        return {error: 'Username already exists.'};
     }
 
     const user = {
@@ -72,14 +72,14 @@ const login = (username, password) => {
     const data = readUsers();
     const user = data.users.find(u => u.username.toLowerCase() === username.toLowerCase());
 
-    if (!user) return {error: 'Ungültige Anmeldedaten.'};
+    if (!user) return {error: 'Invalid credentials.'};
 
     try {
         if (!verifyPassword(password, user.password)) {
-            return {error: 'Ungültige Anmeldedaten.'};
+            return {error: 'Invalid credentials.'};
         }
     } catch {
-        return {error: 'Ungültige Anmeldedaten.'};
+        return {error: 'Invalid credentials.'};
     }
 
     const token = generateToken();
@@ -130,7 +130,7 @@ const getUsers = () => {
 const deleteUser = (userId) => {
     const data = readUsers();
     const idx = data.users.findIndex(u => u.id === userId);
-    if (idx === -1) return {error: 'Benutzer nicht gefunden.'};
+    if (idx === -1) return {error: 'User not found.'};
 
     const user = data.users[idx];
     data.users.splice(idx, 1);
@@ -145,7 +145,7 @@ const deleteUser = (userId) => {
 const updateUserRole = (userId, role) => {
     const data = readUsers();
     const user = data.users.find(u => u.id === userId);
-    if (!user) return {error: 'Benutzer nicht gefunden.'};
+    if (!user) return {error: 'User not found.'};
 
     user.role = role;
     writeUsers(data);
@@ -156,7 +156,7 @@ const updateUserRole = (userId, role) => {
 const changePassword = (userId, newPassword) => {
     const data = readUsers();
     const user = data.users.find(u => u.id === userId);
-    if (!user) return {error: 'Benutzer nicht gefunden.'};
+    if (!user) return {error: 'User not found.'};
 
     user.password = hashPassword(newPassword);
     writeUsers(data);

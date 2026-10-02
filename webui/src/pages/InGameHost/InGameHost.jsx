@@ -44,7 +44,7 @@ export const InGameHost = () => {
             setTimerActive(false);
             socket.emit("SKIP_QUESTION", null, (data) => {
                 if (!data) {
-                    toast.error("Fehler beim Überspringen der Frage");
+                    toast.error("Failed to skip question");
                     return;
                 }
                 setScoreboard(data.scoreboard);
@@ -103,14 +103,14 @@ export const InGameHost = () => {
                     setShowDoublePointsAnimation(false);
 
                     socket.emit("SHOW_QUESTION", newQuestionCopy, (res) => {
-                        if (!res?.success) toast.error(res?.error || "Fehler beim Anzeigen der Frage");
+                        if (!res?.success) toast.error(res?.error || "Failed to show question");
                     });
                     
                     startQuestionSequence();
                 }, 3000);
             } else {
                 socket.emit("SHOW_QUESTION", newQuestionCopy, (res) => {
-                    if (!res?.success) toast.error(res?.error || "Fehler beim Anzeigen der Frage");
+                    if (!res?.success) toast.error(res?.error || "Failed to show question");
                 });
                 
                 startQuestionSequence();
@@ -171,7 +171,7 @@ export const InGameHost = () => {
         inGameMusicRef.current = soundManager.playAmbient('INGAME');
 
         socket.on("PLAYER_LEFT", (player) => {
-            toast.error(`${player.name} hat das Spiel verlassen`);
+            toast.error(`${player.name} left the game`);
             soundManager.playFeedback('PLAYER_LEFT');
             setPlayerCount(count => Math.max(0, count - 1));
         });
@@ -261,7 +261,7 @@ export const InGameHost = () => {
                 <div className="ingame-question">
                     {Object.keys(currentQuestion).length !== 0 && <div className="question-content-container">
                         <div className="top-area">
-                            <Button onClick={skipQuestion} text="Frage überspringen"
+                            <Button onClick={skipQuestion} text="Skip question"
                                     padding="1rem 1.5rem" icon={faForward} />
                         </div>
                         
@@ -273,7 +273,7 @@ export const InGameHost = () => {
                             <div className="answer-progress-panel">
                                 <div className="answer-progress-counter">
                                     <span className="answer-progress-number">{answerProgress.answeredCount}</span>
-                                    <span className="answer-progress-label">Antworten</span>
+                                    <span className="answer-progress-label">Answers</span>
                                 </div>
                             </div>
                         )}
@@ -287,7 +287,7 @@ export const InGameHost = () => {
 
                         {questionAnimationState === 'answers-ready' && currentQuestion.type === QUESTION_TYPES.SLIDER && (
                             <div className={`text-question-indicator ${questionAnimationState}`}>
-                                <h2>Spieler bewegen den Schieberegler...</h2>
+                                <h2>Players are moving the slider...</h2>
                                 <div className="slider-host-preview">
                                     <div className="slider-range-bar">
                                         <span className="range-label">{currentQuestion.answers?.[0]?.min ?? 0}</span>
@@ -302,7 +302,7 @@ export const InGameHost = () => {
 
                         {questionAnimationState === 'answers-ready' && currentQuestion.type === QUESTION_TYPES.TEXT && (
                             <div className={`text-question-indicator ${questionAnimationState}`}>
-                                <h2>Spieler geben ihre Antworten ein...</h2>
+                                <h2>Players are entering their answers...</h2>
                                 <div className="text-input-animation">
                                     <div className="typing-dots">
                                         <span></span>
@@ -315,7 +315,7 @@ export const InGameHost = () => {
 
                         {questionAnimationState === 'answers-ready' && currentQuestion.type === QUESTION_TYPES.SEQUENCE && (
                             <div className={`text-question-indicator ${questionAnimationState}`}>
-                                <h2>Spieler sortieren ihre Antworten...</h2>
+                                <h2>Players are sorting their answers...</h2>
                                 <div className="text-input-animation">
                                     <div className="typing-dots">
                                         <span></span>

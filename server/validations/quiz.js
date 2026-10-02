@@ -10,18 +10,18 @@ module.exports.questionValidation = Joi.object({
             return trimmed;
         })
         .messages({
-            'string.min': 'Fragetitel darf nicht leer sein',
-            'string.max': 'Fragetitel darf maximal 200 Zeichen lang sein'
+            'string.min': 'Question title must not be empty',
+            'string.max': 'Question title must be at most 200 characters long'
         }),
     type: Joi.string().valid('multiple-choice', 'true-false', 'text', 'sequence', 'slider').required(),
     timer: Joi.number().integer().min(-1).max(3600).optional()
         .messages({
-            'number.min': 'Timer muss -1 (unbegrenzt) oder eine positive Zahl sein',
-            'number.max': 'Timer darf maximal 3600 Sekunden (1 Stunde) betragen'
+            'number.min': 'Timer must be -1 (unlimited) or a positive number',
+            'number.max': 'Timer must be at most 3600 seconds (1 hour)'
         }),
     pointMultiplier: Joi.string().valid('none', 'double').optional()
         .messages({
-            'any.only': 'Punktemultiplikator muss "none" oder "double" sein'
+            'any.only': 'Point multiplier must be "none" or "double"'
         }),
     b64_image: Joi.string().max(10000000),
     answers: Joi.when('type', {
@@ -46,8 +46,8 @@ module.exports.questionValidation = Joi.object({
                     return trimmed;
                 })
                 .messages({
-                    'string.min': 'Antwort darf nicht leer sein',
-                    'string.max': 'Antwort darf maximal 150 Zeichen lang sein'
+                    'string.min': 'Answer must not be empty',
+                    'string.max': 'Answer must be at most 150 characters'
                 })
         })).min(1).max(10),
         otherwise: Joi.when('type', {
@@ -62,8 +62,8 @@ module.exports.questionValidation = Joi.object({
                         return trimmed;
                     })
                     .messages({
-                        'string.min': 'Antwort darf nicht leer sein',
-                        'string.max': 'Antwort darf maximal 150 Zeichen lang sein'
+                        'string.min': 'Answer must not be empty',
+                        'string.max': 'Answer must be at most 150 characters'
                     }),
                 order: Joi.number().integer().min(1).optional()
             })).min(2).max(8),
@@ -80,8 +80,8 @@ module.exports.questionValidation = Joi.object({
                         return trimmed;
                     })
                     .messages({
-                        'string.min': 'Antwort darf nicht leer sein',
-                        'string.max': 'Antwort darf maximal 150 Zeichen lang sein'
+                        'string.min': 'Answer must not be empty',
+                        'string.max': 'Answer must be at most 150 characters'
                     }),
                 is_correct: Joi.boolean().required()
             })).length(2).custom((answers, helpers) => {
@@ -91,14 +91,14 @@ module.exports.questionValidation = Joi.object({
                 }
                 return answers;
             }).messages({
-                'array.correctCount': 'Wahr/Falsch-Fragen müssen genau eine richtige Antwort haben'
+                'array.correctCount': 'True/False questions must have exactly one correct answer'
             }),
             otherwise: Joi.array().items(Joi.object({
                 type: Joi.string().valid('text', 'image').required(),
                 content: Joi.string().required().min(1).max(10000000)
                     .messages({
-                        'string.min': 'Bild-URL darf nicht leer sein',
-                        'string.max': 'Bild ist zu groß'
+                        'string.min': 'Image URL must not be empty',
+                        'string.max': 'Image is too large'
                     }),
                 is_correct: Joi.boolean().required()
             })).min(2).max(6)
@@ -128,13 +128,13 @@ module.exports.quizUpload = Joi.object({
             return trimmed;
         })
         .messages({
-            'string.min': 'Quiz-Titel darf nicht leer sein',
-            'string.max': 'Quiz-Titel darf maximal 100 Zeichen lang sein'
+            'string.min': 'Quiz title must not be empty',
+            'string.max': 'Quiz title must be at most 100 characters long'
         }),
     settings: module.exports.settingsValidation.optional(),
     questions: Joi.array().items(module.exports.questionValidation).min(1).max(50).required()
         .messages({
-            'array.min': 'Quiz muss mindestens eine Frage enthalten',
-            'array.max': 'Quiz darf maximal 50 Fragen enthalten'
+            'array.min': 'Quiz must contain at least one question',
+            'array.max': 'Quiz must contain at most 50 questions'
         })
 });

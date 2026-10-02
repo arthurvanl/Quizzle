@@ -16,11 +16,11 @@ export const LoginDialog = ({isOpen, onClose, onSuccess}) => {
 
     const handleConfirm = async () => {
         if (!username.trim()) {
-            setError('Benutzername ist erforderlich');
+            setError('Username is required');
             return;
         }
         if (!password) {
-            setError('Passwort ist erforderlich');
+            setError('Password is required');
             return;
         }
 
@@ -29,13 +29,13 @@ export const LoginDialog = ({isOpen, onClose, onSuccess}) => {
 
         try {
             await login(username.trim(), password);
-            toast.success('Erfolgreich angemeldet.');
+            toast.success('Logged in successfully.');
             setUsername('');
             setPassword('');
             setError('');
             onSuccess?.();
         } catch (err) {
-            setError(err.message || 'Anmeldung fehlgeschlagen.');
+            setError(err.message || 'Login failed.');
         } finally {
             setLoading(false);
         }
@@ -57,27 +57,27 @@ export const LoginDialog = ({isOpen, onClose, onSuccess}) => {
             title={
                 <div className="login-dialog-title">
                     <FontAwesomeIcon icon={faRightToBracket} className="login-dialog-title-icon"/>
-                    Anmelden
+                    Log in
                 </div>
             }
-            confirmText={loading ? "..." : "Anmelden"}
-            cancelText="Abbrechen"
+            confirmText={loading ? "..." : "Log in"}
+            cancelText="Cancel"
             className="login-dialog"
         >
             <div className="login-dialog-content">
                 <p className="login-dialog-text">
-                    Bitte melde dich mit deinem <strong>Benutzerkonto</strong> an.
+                    Please log in with your <strong>user account</strong>.
                 </p>
                 <div className="login-input-wrapper">
                     <Input
-                        placeholder="Benutzername"
+                        placeholder="Username"
                         value={username}
                         onChange={(e) => {setUsername(e.target.value); setError('');}}
                         onKeyDown={(e) => e.key === 'Enter' && handleConfirm()}
                     />
                     <Input
                         type="password"
-                        placeholder="Passwort"
+                        placeholder="Password"
                         value={password}
                         onChange={(e) => {setPassword(e.target.value); setError('');}}
                         error={error}

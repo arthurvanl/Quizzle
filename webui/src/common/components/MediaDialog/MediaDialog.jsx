@@ -14,9 +14,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const ALL_TABS = [
-    {id: "images", label: "Bilder", icon: faImage, requiresApi: true},
+    {id: "images", label: "Images", icon: faImage, requiresApi: true},
     {id: "gifs", label: "GIFs", icon: faFilm, requiresApi: true},
-    {id: "upload", label: "Hochladen", icon: faUpload, requiresApi: false},
+    {id: "upload", label: "Upload", icon: faUpload, requiresApi: false},
 ];
 
 export const MediaDialog = ({isOpen, onClose, onSelect}) => {
@@ -69,7 +69,7 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
 
             if (!response.ok) {
                 const data = await response.json().catch(() => ({}));
-                throw new Error(data.message || "Fehler bei der Suche.");
+                throw new Error(data.message || "Search failed.");
             }
 
             const data = await response.json();
@@ -111,7 +111,7 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
             onSelect(file);
             onClose();
         } catch (err) {
-            setError("Fehler beim Laden des Mediums.");
+            setError("Failed to load media.");
         } finally {
             setLoading(false);
         }
@@ -120,7 +120,7 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
     const handleFileUpload = (files) => {
         const file = files[0];
         if (!file || !file.type.startsWith("image/")) {
-            setError("Nur Bilddateien sind erlaubt.");
+            setError("Only image files are allowed.");
             return;
         }
         onSelect(file);
@@ -156,7 +156,7 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
                         className="media-dialog"
                         role="dialog"
                         aria-modal="true"
-                        aria-label="Medien einfügen"
+                        aria-label="Insert media"
                         initial={{opacity: 0, scale: 0.9, y: -20}}
                         animate={{opacity: 1, scale: 1, y: 0}}
                         exit={{opacity: 0, scale: 0.9, y: -20}}
@@ -165,8 +165,8 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
                         onKeyDown={(e) => e.key === 'Escape' && onClose()}
                     >
                         <div className="media-dialog-header">
-                            <h3>Medien einfügen</h3>
-                            <button type="button" className="media-dialog-close" onClick={onClose} aria-label="Dialog schließen">
+                            <h3>Insert media</h3>
+                            <button type="button" className="media-dialog-close" onClick={onClose} aria-label="Close dialog">
                                 <FontAwesomeIcon icon={faTimes} aria-hidden="true"/>
                             </button>
                         </div>
@@ -198,7 +198,7 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
                                         <FontAwesomeIcon icon={faSearch} className="search-icon"/>
                                         <input
                                             type="text"
-                                            placeholder="Suche..."
+                                            placeholder="Search..."
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             autoFocus
@@ -225,7 +225,7 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
                                         onClick={() => fileInputRef.current?.click()}
                                     >
                                         <FontAwesomeIcon icon={faUpload}/>
-                                        <p>Datei hierher ziehen oder klicken</p>
+                                        <p>Drag a file here or click</p>
                                         <span>PNG, JPG, GIF, WebP</span>
                                         <input
                                             ref={fileInputRef}
@@ -244,7 +244,7 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
                                 )}
 
                                 {isSearchTab && !loading && !error && results.length === 0 && searchQuery.trim() && (
-                                    <div className="media-empty">Keine Ergebnisse gefunden.</div>
+                                    <div className="media-empty">No results found.</div>
                                 )}
 
                                 {isSearchTab && !loading && results.length > 0 && (
@@ -272,12 +272,12 @@ export const MediaDialog = ({isOpen, onClose, onSelect}) => {
 
                                 {activeTab === "images" && results.length > 0 && !loading && (
                                     <div className="media-attribution-footer">
-                                        {searchQuery.trim() ? "Ergebnisse" : "Beliebte Bilder"} von <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer">Unsplash</a>
+                                        {searchQuery.trim() ? "Results" : "Popular images"} from <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer">Unsplash</a>
                                     </div>
                                 )}
                                 {activeTab === "gifs" && results.length > 0 && !loading && (
                                     <div className="media-attribution-footer">
-                                        {searchQuery.trim() ? "Ergebnisse" : "Beliebte GIFs"} von <a href="https://giphy.com" target="_blank" rel="noopener noreferrer">GIPHY</a>
+                                        {searchQuery.trim() ? "Results" : "Popular GIFs"} from <a href="https://giphy.com" target="_blank" rel="noopener noreferrer">GIPHY</a>
                                     </div>
                                 )}
                             </div>

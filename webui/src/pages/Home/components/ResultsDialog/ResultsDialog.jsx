@@ -16,11 +16,11 @@ export const ResultsDialog = ({isOpen, onClose, practiceCode, onSuccess}) => {
                 onSuccess(practiceCode);
             } catch (error) {
                 if (error.message?.includes('404')) {
-                    toast.error('Übungsquiz nicht gefunden');
+                    toast.error('Practice quiz not found');
                 } else if (error.message?.includes('401')) {
-                    toast.error('Anmeldung erforderlich');
+                    toast.error('Login required');
                 } else {
-                    toast.error('Fehler beim Laden der Ergebnisse');
+                    toast.error('Failed to load results');
                 }
             }
         };

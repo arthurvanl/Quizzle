@@ -1,38 +1,38 @@
 export const CREDITS = [
     {
         id: "backgrounds",
-        title: "Host-Hintergründe",
+        title: "Host backgrounds",
         entries: [
             {
-                title: "Klassenzimmer",
+                title: "Classroom",
                 author: "upklyak",
                 authorUrl: "https://www.freepik.com/author/upklyak",
                 source: "https://www.freepik.com/free-vector/physics-classroom-interior-school-class-room_29837597.htm",
                 sourceName: "Freepik"
             },
             {
-                title: "Bibliothek",
+                title: "Library",
                 author: "upklyak",
                 authorUrl: "https://www.freepik.com/author/upklyak",
                 source: "https://www.freepik.com/free-vector/old-library-interior-night_173011785.htm",
                 sourceName: "Freepik"
             },
             {
-                title: "Stadion",
+                title: "Stadium",
                 author: "upklyak",
                 authorUrl: "https://www.freepik.com/author/upklyak",
                 source: "https://www.freepik.com/free-vector/school-gymnasium-with-sport-equipment-balls_37205232.htm",
                 sourceName: "Freepik"
             },
             {
-                title: "Weltraum",
+                title: "Space",
                 author: "upklyak",
                 authorUrl: "https://www.freepik.com/author/upklyak",
                 source: "https://www.freepik.com/free-vector/floating-platform-space-game-level-ui-background-2d-planet-galaxy-online-adventure-videogame-interface-illustration-asset-futuristic-cosmos-landscape-with-flying-asteroid-rock-island_72090703.htm",
                 sourceName: "Freepik"
             },
             {
-                title: "Strand",
+                title: "Beach",
                 author: "upklyak",
                 authorUrl: "https://www.freepik.com/author/upklyak",
                 source: "https://www.freepik.com/free-vector/hut-island-beach-tropical-cartoon-illustration-hawaii-summer-house-near-sea-palm-tree-landscape-paradise-hotel-shack-building-sand-seaside-apartment-vacation-maldives-lagoon_93410099.htm",
@@ -49,7 +49,7 @@ export const CREDITS = [
     },
     {
         id: "audio",
-        title: "Musik",
+        title: "Music",
         entries: [
             {
                 title: "Thinking Ambient",
@@ -69,7 +69,7 @@ export const CREDITS = [
     },
     {
         id: "fonts",
-        title: "Schriftarten",
+        title: "Fonts",
         entries: [
             {
                 title: "Inter",
@@ -83,7 +83,7 @@ export const CREDITS = [
     },
     {
         id: "libraries",
-        title: "Open-Source-Bibliotheken",
+        title: "Open-source libraries",
         entries: [
             {
                 title: "React",

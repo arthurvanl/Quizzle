@@ -65,8 +65,8 @@ export const SequenceAnswers = ({answers, onChange}) => {
     return (
         <div className="sequence-answers-container">
             <div className="sequence-answers-header">
-                <h3>Antworten</h3>
-                <span className="sequence-answers-hint">Sortiere die Antworten in die richtige Reihenfolge</span>
+                <h3>Answers</h3>
+                <span className="sequence-answers-hint">Sort the answers into the correct order</span>
             </div>
             
             {answers.length > 0 && (
@@ -99,7 +99,7 @@ export const SequenceAnswers = ({answers, onChange}) => {
                                         value={answer.content}
                                         onChange={(e) => updateAnswer(index, e.target.value)}
                                         onBlur={(e) => handleInputBlur(index, e.target.value)}
-                                        placeholder={`Antwort ${index + 1}`}
+                                        placeholder={`Answer ${index + 1}`}
                                         className="sequence-answer-input"
                                         maxLength={150}
                                     />
@@ -123,7 +123,7 @@ export const SequenceAnswers = ({answers, onChange}) => {
                     type="text"
                     value={newAnswer}
                     onChange={(e) => setNewAnswer(e.target.value)}
-                    placeholder="Neue Antwort hinzufügen..."
+                    placeholder="Add new answer..."
                     className="new-answer-input"
                     maxLength={150}
                     onKeyPress={(e) => {
@@ -145,7 +145,7 @@ export const SequenceAnswers = ({answers, onChange}) => {
 
             {answers.length === 0 && (
                 <div className="no-answers-hint">
-                    Füge mindestens zwei Antworten hinzu
+                    Add at least two answers
                 </div>
             )}
         </div>

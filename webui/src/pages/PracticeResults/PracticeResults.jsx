@@ -36,11 +36,11 @@ export const PracticeResults = () => {
             setResults(response);
         } catch (error) {
             if (error.message?.includes('401')) {
-                toast.error('Anmeldung erforderlich.');
+                toast.error('Login required.');
             } else if (error.message?.includes('404')) {
-                toast.error('Übungsquiz nicht gefunden.');
+                toast.error('Practice quiz not found.');
             } else {
-                toast.error('Fehler beim Laden der Ergebnisse.');
+                toast.error('Failed to load results.');
             }
             navigate('/');
         } finally {
@@ -49,7 +49,7 @@ export const PracticeResults = () => {
     };
 
     const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleString('de-DE', {
+        return new Date(dateString).toLocaleString('en-GB', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
@@ -78,16 +78,16 @@ export const PracticeResults = () => {
 
     const handleExportToExcel = () => {
         if (!results || !analyticsData) {
-            toast.error('Keine Daten zum Exportieren verfügbar');
+            toast.error('No data available to export');
             return;
         }
 
         try {
             const filename = exportPracticeResultsToExcel(results, code);
-            toast.success(`Analytics exportiert: ${filename}`);
+            toast.success(`Analytics exported: ${filename}`);
         } catch (error) {
             console.error('Error exporting to Excel:', error);
-            toast.error('Fehler beim Exportieren der Daten');
+            toast.error('Failed to export data');
         }
     };
 
@@ -197,7 +197,7 @@ export const PracticeResults = () => {
             return (
                 <div className="text-answer">
                     <div className="answer-line">
-                        <span className="answer-label">Antwort:</span>
+                        <span className="answer-label">Answer:</span>
                         <span className={`answer-value ${result === 'correct' ? 'correct' : 'incorrect'}`}>
                             {answer}
                         </span>
@@ -208,7 +208,7 @@ export const PracticeResults = () => {
                     </div>
                     {result !== 'correct' && (
                         <div className="answer-line">
-                            <span className="answer-label">Richtig:</span>
+                            <span className="answer-label">Correct:</span>
                             <span className="answer-value correct">{correctAnswer}</span>
                         </div>
                     )}
@@ -234,7 +234,7 @@ export const PracticeResults = () => {
             return (
                 <div className="slider-answer">
                     <div className="answer-line">
-                        <span className="answer-label">Antwort:</span>
+                        <span className="answer-label">Answer:</span>
                         <span className={`answer-value ${result === 'incorrect' ? 'incorrect' : 'correct'}`}>
                             {Number.isFinite(userValue) ? userValue : '-'}
                         </span>
@@ -245,15 +245,15 @@ export const PracticeResults = () => {
                     </div>
 
                     <div className="answer-line">
-                        <span className="answer-label">Richtig:</span>
+                        <span className="answer-label">Correct:</span>
                         <span className="answer-value correct">{Number.isFinite(correctValue) ? correctValue : '-'}</span>
                     </div>
 
                     {marginKey !== 'none' && Number.isFinite(acceptedMin) && Number.isFinite(acceptedMax) && (
                         <div className="answer-line">
-                            <span className="answer-label">Marge:</span>
+                            <span className="answer-label">Margin:</span>
                             <span className="answer-value">
-                                {acceptedMin.toFixed(2).replace(/\.00$/, '')} bis {acceptedMax.toFixed(2).replace(/\.00$/, '')}
+                                {acceptedMin.toFixed(2).replace(/\.00$/, '')} to {acceptedMax.toFixed(2).replace(/\.00$/, '')}
                             </span>
                         </div>
                     )}
@@ -294,10 +294,10 @@ export const PracticeResults = () => {
             return (
                 <div className="sequence-answer">
                     <div className="answer-line">
-                        <span className="answer-label">Ihre Reihenfolge:</span>
+                        <span className="answer-label">Your order:</span>
                         <div className="sequence-list">
                             {userOrder.map((originalIndex, position) => {
-                                const answerContent = question.answers[originalIndex]?.content || `Antwort ${originalIndex + 1}`;
+                                const answerContent = question.answers[originalIndex]?.content || `Answer ${originalIndex + 1}`;
                                 const isCorrectPosition = userOrder[position] === position;
                                 return (
                                     <div 
@@ -317,7 +317,7 @@ export const PracticeResults = () => {
                     </div>
                     {result !== 'correct' && (
                         <div className="answer-line">
-                            <span className="answer-label">Richtige Reihenfolge:</span>
+                            <span className="answer-label">Correct order:</span>
                             <div className="sequence-list correct-order">
                                 {correctOrder.map((content, position) => (
                                     <div key={position} className="sequence-item correct">
@@ -371,7 +371,7 @@ export const PracticeResults = () => {
             <div className="practice-results-page">
                 <div className="page-header">
                     <img src={titleImg} alt="logo" className="logo"/>
-                    <h1>Ergebnisse werden geladen...</h1>
+                    <h1>Loading results...</h1>
                 </div>
             </div>
         );
@@ -382,11 +382,11 @@ export const PracticeResults = () => {
             <div className="practice-results-page">
                 <div className="page-header">
                     <img src={titleImg} alt="logo" className="logo"/>
-                    <h1>Keine Ergebnisse gefunden</h1>
+                    <h1>No results found</h1>
                     <div className="code-display">Code: <strong>{code}</strong></div>
                 </div>
                 <motion.div className="auth-card" initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}}>
-                    <Button text="Zurück zur Startseite" onClick={() => navigate('/')} />
+                    <Button text="Back to home" onClick={() => navigate('/')} />
                 </motion.div>
             </div>
         );
@@ -405,7 +405,7 @@ export const PracticeResults = () => {
         <div className="practice-results-page">
             <div className="page-header">
                 <img src={titleImg} alt="logo" className="logo"/>
-                <h1>Übungsquiz Ergebnisse</h1>
+                <h1>Practice quiz results</h1>
                 <div className="code-display">Code: <strong>{code}</strong></div>
             </div>
 
@@ -417,21 +417,21 @@ export const PracticeResults = () => {
                 <div className="stats-overview">
                     <div className="stat-card">
                         <div className="stat-number">{results.meta.totalAttempts}</div>
-                        <div className="stat-label">Versuche</div>
+                        <div className="stat-label">Attempts</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-number">{results.meta.averageScore.toFixed(1)}</div>
-                        <div className="stat-label">Durchschnitt</div>
+                        <div className="stat-label">Average</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-number">{topScore}</div>
-                        <div className="stat-label">Beste Punktzahl</div>
+                        <div className="stat-label">Best score</div>
                     </div>
                     <div className="stat-card">
                         <div className="stat-number">
                             {formatDuration(results.meta.created, results.meta.expiry)} Tage
                         </div>
-                        <div className="stat-label">Verbleiben</div>
+                        <div className="stat-label">Remaining</div>
                     </div>
                 </div>
 
@@ -461,7 +461,7 @@ export const PracticeResults = () => {
 
                         {activeView === 'students' && (
                             <div className="students-section">
-                                <h3>Nach Schülern gruppiert</h3>
+                                <h3>Grouped by student</h3>
                                 <div className="students-grid">
                                     {Object.entries(results.studentResults).map(([studentName, attempts]) => {
                                         const bestAttempt = attempts.reduce((best, current) =>
@@ -485,16 +485,16 @@ export const PracticeResults = () => {
                                                 </div>
                                                 <div className="student-stats">
                                                     <div className="stat">
-                                                        <span className="label">Versuche:</span>
+                                                        <span className="label">Attempts:</span>
                                                         <span className="value">{totalAttempts}</span>
                                                     </div>
                                                     <div className="stat">
-                                                        <span className="label">Beste:</span>
+                                                        <span className="label">Best:</span>
                                                         <span
                                                             className="value">{bestAttempt.score}/{bestAttempt.total}</span>
                                                     </div>
                                                     <div className="stat">
-                                                        <span className="label">Durchschnitt:</span>
+                                                        <span className="label">Average:</span>
                                                         <span className="value">{avgScore.toFixed(1)}</span>
                                                     </div>
                                                 </div>
@@ -509,14 +509,14 @@ export const PracticeResults = () => {
 
                 <div className="bottom-actions-section">
                     <Button 
-                        text="Zurück zur Startseite"
+                        text="Back to home"
                         icon={faHome}
                         onClick={() => navigate('/')}
                         type="compact primary"
                     />
                     {analyticsData && (
                         <Button
-                            text="Als Excel herunterladen"
+                            text="Download as Excel"
                             icon={faDownload}
                             onClick={handleExportToExcel}
                             type="compact green"
@@ -544,7 +544,7 @@ export const PracticeResults = () => {
                 {selectedStudent && (
                     <div className="student-details-content">
                         <div className="attempts-selector">
-                            <h4>Versuch auswählen:</h4>
+                            <h4>Select attempt:</h4>
                             <div className="attempts-list">
                                 {selectedStudent.attempts.map((attempt, index) => {
                                     const percentage = Math.round((attempt.score / attempt.total) * 100);
@@ -569,7 +569,7 @@ export const PracticeResults = () => {
                                                         <div key={qIndex} className="question-detail">
                                                             <div className="question-header">
                                                                 <span
-                                                                    className="question-number">Frage {qIndex + 1}:</span>
+                                                                    className="question-number">Question {qIndex + 1}:</span>
                                                                 <FontAwesomeIcon
                                                                     icon={
                                                                         answerData.result === 'correct' ? faCheck :
@@ -593,7 +593,7 @@ export const PracticeResults = () => {
                                                 })}
                                                 {(!results.quiz || !results.quiz.questions) && (
                                                     <div className="loading-questions">
-                                                        Fragen werden geladen...
+                                                        Loading questions...
                                                     </div>
                                                 )}
                                             </div>

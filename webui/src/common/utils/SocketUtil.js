@@ -175,7 +175,7 @@ export const joinRoomWithSession = (roomCode, name, character) => {
                     }
                     resolve(response);
                 } else {
-                    reject(new Error(response?.error || "Fehler beim Beitreten"));
+                    reject(new Error(response?.error || "Failed to join"));
                 }
             });
         }).catch(reject);

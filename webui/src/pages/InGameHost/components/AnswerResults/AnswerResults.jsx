@@ -44,11 +44,11 @@ export const AnswerResults = ({question, answerData, showScoreboard}) => {
         return (
             <div className="answer-results">
                 <div className="top-area">
-                    <Button onClick={showScoreboard} text="Scoreboard anzeigen"
+                    <Button onClick={showScoreboard} text="Show leaderboard"
                             padding="1rem 1.5rem" icon={faForward}/>
                 </div>
 
-                <h1>Richtige Antwort: {correctValue}</h1>
+                <h1>Correct answer: {correctValue}</h1>
 
                 <div className="slider-results">
                     <div className="slider-results-track">
@@ -90,11 +90,11 @@ export const AnswerResults = ({question, answerData, showScoreboard}) => {
         return (
             <div className="answer-results">
                 <div className="top-area">
-                    <Button onClick={showScoreboard} text="Scoreboard anzeigen"
+                    <Button onClick={showScoreboard} text="Show leaderboard"
                             padding="1rem 1.5rem" icon={faForward}/>
                 </div>
 
-                <h1>Richtige Antworten</h1>
+                <h1>Correct answers</h1>
 
                 <div className="correct-answers">
                     {answerData.answers.map((answer, index) => (
@@ -117,11 +117,11 @@ export const AnswerResults = ({question, answerData, showScoreboard}) => {
         return (
             <div className="answer-results">
                 <div className="top-area">
-                    <Button onClick={showScoreboard} text="Scoreboard anzeigen"
+                    <Button onClick={showScoreboard} text="Show leaderboard"
                             padding="1rem 1.5rem" icon={faForward}/>
                 </div>
 
-                <h1>Richtige Reihenfolge</h1>
+                <h1>Correct order</h1>
 
                 <div className="sequence-correct-order">
                     {answerData.answers.map((answer, index) => (
@@ -146,11 +146,11 @@ export const AnswerResults = ({question, answerData, showScoreboard}) => {
     return (
         <div className="answer-results">
             <div className="top-area">
-                <Button onClick={showScoreboard} text="Scoreboard anzeigen"
+                <Button onClick={showScoreboard} text="Show leaderboard"
                         padding="1rem 1.5rem" icon={faForward}/>
             </div>
 
-            <h1>Antworten</h1>
+            <h1>Answers</h1>
 
             <motion.div
                 className="vote-bars-section"

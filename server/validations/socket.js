@@ -26,9 +26,9 @@ module.exports.joinRoom = Joi.object({
             return value;
         })
         .messages({
-            'string.pattern.base': 'Name darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Unterstriche enthalten',
-            'string.min': 'Name muss mindestens 2 Zeichen lang sein',
-            'string.max': 'Name darf maximal 20 Zeichen lang sein'
+            'string.pattern.base': 'Name may only contain letters, numbers, spaces, hyphens and underscores',
+            'string.min': 'Name must be at least 2 characters long',
+            'string.max': 'Name must be at most 20 characters long'
         }),
     character: Joi.string().required().valid(...Object.keys(CHARACTER_DATA))
 });

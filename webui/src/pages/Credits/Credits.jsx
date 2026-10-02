@@ -25,13 +25,13 @@ export const Credits = () => {
                 transition={{duration: 0.4}}
             >
                 <div className="credits-header">
-                    <Button icon={faArrowLeft} onClick={() => navigate("/")} ariaLabel="Zurück">
-                        Zurück
+                    <Button icon={faArrowLeft} onClick={() => navigate("/")} ariaLabel="Back">
+                        Back
                     </Button>
                     <h1>Credits &amp; Attributions</h1>
                     <p className="credits-subtitle">
-                        Quizzle wäre ohne die großartige Arbeit vieler Künstler:innen und Open-Source-Projekte
-                        nicht möglich. Vielen Dank!
+                        Quizzle would not be possible without the great work of many artists and open-source projects.
+                        Thank you!
                     </p>
                 </div>
 
@@ -58,7 +58,7 @@ export const Credits = () => {
                                         <span className="credit-title">{entry.title}</span>
                                         {entry.author && (
                                             <span className="credit-author">
-                                                von{" "}
+                                                by{" "}
                                                 {entry.authorUrl ? (
                                                     <a href={entry.authorUrl} target="_blank" rel="noreferrer">
                                                         {entry.author}
@@ -72,7 +72,7 @@ export const Credits = () => {
                                     <div className="credit-meta">
                                         {entry.source && (
                                             <a href={entry.source} target="_blank" rel="noreferrer" className="credit-link">
-                                                {entry.sourceName || "Quelle"}
+                                                {entry.sourceName || "Source"}
                                             </a>
                                         )}
                                         {entry.license && (

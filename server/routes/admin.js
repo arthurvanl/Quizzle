@@ -8,10 +8,10 @@ const {createProvider} = require('../utils/ai');
 
 app.post('/models', requireAdmin, async (req, res) => {
     const {provider, apiKey, baseUrl} = req.body;
-    if (!provider) return res.status(400).json({message: 'Anbieter ist erforderlich.'});
+    if (!provider) return res.status(400).json({message: 'Provider is required.'});
 
     const instance = createProvider({provider, apiKey, baseUrl});
-    if (!instance) return res.status(400).json({message: 'Ungültiger Anbieter.'});
+    if (!instance) return res.status(400).json({message: 'Invalid provider.'});
 
     try {
         const models = await instance.listModels();
@@ -83,24 +83,24 @@ app.put('/branding/:type', requireAdmin, (req, res) => {
     const {type} = req.params;
 
     if (type !== 'logo' && type !== 'title') {
-        return res.status(400).json({message: 'Ungültiger Bildtyp.'});
+        return res.status(400).json({message: 'Invalid image type.'});
     }
 
     const {image} = req.body;
 
     if (!image || typeof image !== 'string') {
-        return res.status(400).json({message: 'Kein Bild übermittelt.'});
+        return res.status(400).json({message: 'No image provided.'});
     }
 
     const match = image.match(/^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,(.+)$/);
     if (!match) {
-        return res.status(400).json({message: 'Ungültiges Bildformat. Erlaubt: PNG, JPEG, GIF, WebP, SVG.'});
+        return res.status(400).json({message: 'Invalid image format. Allowed: PNG, JPEG, GIF, WebP, SVG.'});
     }
 
     const buffer = Buffer.from(match[2], 'base64');
 
     if (buffer.length > 5 * 1024 * 1024) {
-        return res.status(400).json({message: 'Bild ist zu groß (max. 5 MB).'});
+        return res.status(400).json({message: 'Image is too large (max 5 MB).'});
     }
 
     const filePath = path.join(brandingFolder, `${type}.png`);
@@ -113,14 +113,14 @@ app.delete('/branding/:type', requireAdmin, (req, res) => {
     const {type} = req.params;
 
     if (type !== 'logo' && type !== 'title') {
-        return res.status(400).json({message: 'Ungültiger Bildtyp.'});
+        return res.status(400).json({message: 'Invalid image type.'});
     }
 
     const defaultPath = path.join(process.cwd(), 'content', `${type}.png`);
     const targetPath = path.join(brandingFolder, `${type}.png`);
 
     if (!fs.existsSync(defaultPath)) {
-        return res.status(404).json({message: 'Standard-Bild nicht gefunden.'});
+        return res.status(404).json({message: 'Default image not found.'});
     }
 
     fs.copyFileSync(defaultPath, targetPath);
@@ -135,23 +135,23 @@ app.post('/users', requireAdmin, (req, res) => {
     const {username, password, role} = req.body;
 
     if (!username || !password) {
-        return res.status(400).json({message: 'Benutzername und Passwort sind erforderlich.'});
+        return res.status(400).json({message: 'Username and password are required.'});
     }
 
     if (username.length < 3 || username.length > 32) {
-        return res.status(400).json({message: 'Benutzername muss zwischen 3 und 32 Zeichen lang sein.'});
+        return res.status(400).json({message: 'Username must be between 3 and 32 characters.'});
     }
 
     if (password.length < 6) {
-        return res.status(400).json({message: 'Passwort muss mindestens 6 Zeichen lang sein.'});
+        return res.status(400).json({message: 'Password must be at least 6 characters long.'});
     }
 
     if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
-        return res.status(400).json({message: 'Benutzername darf nur Buchstaben, Zahlen, Punkte, Bindestriche und Unterstriche enthalten.'});
+        return res.status(400).json({message: 'Username may only contain letters, numbers, dots, hyphens and underscores.'});
     }
 
     if (role && !['admin', 'teacher'].includes(role)) {
-        return res.status(400).json({message: 'Ungültige Rolle.'});
+        return res.status(400).json({message: 'Invalid role.'});
     }
 
     const result = createUser(username, password, role || 'teacher');
@@ -166,7 +166,7 @@ app.delete('/users/:userId', requireAdmin, (req, res) => {
     const {userId} = req.params;
 
     if (userId === req.user.id) {
-        return res.status(400).json({message: 'Du kannst deinen eigenen Account nicht löschen.'});
+        return res.status(400).json({message: 'You cannot delete your own account.'});
     }
 
     const result = deleteUser(userId);
@@ -182,11 +182,11 @@ app.put('/users/:userId/role', requireAdmin, (req, res) => {
     const {role} = req.body;
 
     if (!role || !['admin', 'teacher'].includes(role)) {
-        return res.status(400).json({message: 'Ungültige Rolle.'});
+        return res.status(400).json({message: 'Invalid role.'});
     }
 
     if (userId === req.user.id) {
-        return res.status(400).json({message: 'Du kannst deine eigene Rolle nicht ändern.'});
+        return res.status(400).json({message: 'You cannot change your own role.'});
     }
 
     const result = updateUserRole(userId, role);
@@ -202,7 +202,7 @@ app.put('/users/:userId/password', requireAdmin, (req, res) => {
     const {password} = req.body;
 
     if (!password || password.length < 6) {
-        return res.status(400).json({message: 'Passwort muss mindestens 6 Zeichen lang sein.'});
+        return res.status(400).json({message: 'Password must be at least 6 characters long.'});
     }
 
     const result = changePassword(userId, password);

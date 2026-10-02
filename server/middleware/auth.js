@@ -22,12 +22,12 @@ const optionalAuth = (req, res, next) => {
 const requireAuth = (req, res, next) => {
     const token = extractToken(req);
     if (!token) {
-        return res.status(401).json({message: 'Authentifizierung erforderlich.'});
+        return res.status(401).json({message: 'Authentication required.'});
     }
 
     const user = validateToken(token);
     if (!user) {
-        return res.status(401).json({message: 'Sitzung abgelaufen. Bitte erneut anmelden.'});
+        return res.status(401).json({message: 'Session expired. Please sign in again.'});
     }
 
     req.user = user;
@@ -38,7 +38,7 @@ const requireAuth = (req, res, next) => {
 const requireAdmin = (req, res, next) => {
     requireAuth(req, res, () => {
         if (req.user.role !== 'admin') {
-            return res.status(403).json({message: 'Administratorrechte erforderlich.'});
+            return res.status(403).json({message: 'Administrator rights required.'});
         }
         next();
     });

@@ -10,9 +10,9 @@ const AnalyticsTabs = ({ analyticsData, quizData, isLiveQuiz = false }) => {
     const [activeTab, setActiveTab] = useState('overview');
 
     const tabs = [
-        {id: 'overview', title: 'Übersicht', icon: faChartPie, component: ClassOverview},
-        {id: 'students', title: 'Schüler', icon: faUsers, component: StudentAnalytics},
-        {id: 'questions', title: 'Fragen', icon: faQuestionCircle, component: QuestionAnalytics}
+        {id: 'overview', title: 'Overview', icon: faChartPie, component: ClassOverview},
+        {id: 'students', title: 'Students', icon: faUsers, component: StudentAnalytics},
+        {id: 'questions', title: 'Questions', icon: faQuestionCircle, component: QuestionAnalytics}
     ];
 
     const ActiveComponent = tabs.find(tab => tab.id === activeTab)?.component;

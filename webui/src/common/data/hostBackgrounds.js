@@ -6,11 +6,11 @@ import beach from "@/common/assets/host-backgrounds/beach.jpg";
 import studio from "@/common/assets/host-backgrounds/studio.jpg";
 
 export const HOST_BACKGROUNDS = [
-    {id: "classroom", label: "Klassenzimmer", image: classroom},
-    {id: "library", label: "Bibliothek", image: library},
-    {id: "stadium", label: "Stadion", image: stadium},
-    {id: "space", label: "Weltraum", image: space},
-    {id: "beach", label: "Strand", image: beach},
+    {id: "classroom", label: "Classroom", image: classroom},
+    {id: "library", label: "Library", image: library},
+    {id: "stadium", label: "Stadium", image: stadium},
+    {id: "space", label: "Space", image: space},
+    {id: "beach", label: "Beach", image: beach},
     {id: "studio", label: "Studio", image: studio}
 ];
 

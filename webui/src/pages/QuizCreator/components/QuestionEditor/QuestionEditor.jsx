@@ -48,7 +48,7 @@ export const QuestionEditor = ({question, onChange, onCommit, deleteQuestion, du
     return (
         <motion.div className="question-editor" initial={{x: -300, opacity: 0}} animate={{x: 0, opacity: 1}}>
             <div className="question-action-area">
-                <Input placeholder="Fragentitel eingeben" value={question.title} onChange={(e) => updateTitle(e.target.value)}
+                <Input placeholder="Enter question title" value={question.title} onChange={(e) => updateTitle(e.target.value)}
                           textAlign="center"/>
                 
                 <div className="question-type-selector-container" ref={popoverRef}>

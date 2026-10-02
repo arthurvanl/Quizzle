@@ -30,7 +30,7 @@ export const useAIGeneration = ({setQuestions, setActiveQuestion, setTitle, setD
 
         const controller = new AbortController();
         abortRef.current = controller;
-        let stage = 'Warte auf KI...';
+        let stage = 'Waiting for AI...';
         let firstQuestionHandled = false;
 
         const isEmptyQuestion = (q) => !q || (!q.title?.trim() && (!q.answers || q.answers.length === 0));
@@ -45,7 +45,7 @@ export const useAIGeneration = ({setQuestions, setActiveQuestion, setTitle, setD
                         padding: '0.2rem 0.6rem', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600,
                         color: '#EC5555', whiteSpace: 'nowrap', fontFamily: 'Inter, sans-serif'
                     }}
-                >Stopp
+                >Stop
                 </button>
             </div>
         );
@@ -77,7 +77,7 @@ export const useAIGeneration = ({setQuestions, setActiveQuestion, setTitle, setD
 
             if (!response.ok) {
                 const err = await response.json().catch(() => ({}));
-                throw new Error(err.message || "Fehler bei der Generierung.");
+                throw new Error(err.message || "Generation failed.");
             }
 
             const reader = response.body.getReader();
@@ -85,7 +85,7 @@ export const useAIGeneration = ({setQuestions, setActiveQuestion, setTitle, setD
             let buffer = '';
             let count = 0;
 
-            updateToast(generateMetadata ? "KI erstellt Titel & Beschreibung..." : "KI generiert Fragen...", 0);
+            updateToast(generateMetadata ? "AI is creating title & description..." : "AI is generating questions...", 0);
 
             while (true) {
                 const {done: readerDone, value} = await reader.read();
@@ -104,9 +104,9 @@ export const useAIGeneration = ({setQuestions, setActiveQuestion, setTitle, setD
 
                         if (event.type === 'status') {
                             if (event.stage === 'metadata') {
-                                updateToast("KI erstellt Titel & Beschreibung...", count);
+                                updateToast("AI is creating title & description...", count);
                             } else if (event.stage === 'questions') {
-                                updateToast("KI generiert Fragen...", count);
+                                updateToast("AI is generating questions...", count);
                             }
                         } else if (event.type === 'metadata') {
                             const {title: metaTitle, description: metaDesc} = event.data || {};
@@ -132,7 +132,7 @@ export const useAIGeneration = ({setQuestions, setActiveQuestion, setTitle, setD
 
                             setActiveQuestion(newQuestion.uuid);
                             count++;
-                            updateToast("KI generiert Fragen...", count);
+                            updateToast("AI is generating questions...", count);
                         } else if (event.type === 'image') {
                             const {uuid, b64_image} = event;
                             if (uuid && b64_image) {
@@ -160,10 +160,10 @@ export const useAIGeneration = ({setQuestions, setActiveQuestion, setTitle, setD
                 }
             }
 
-            toast.success(`${count} Frage${count !== 1 ? 'n' : ''} generiert!`, {id: toastId, duration: 4000});
+            toast.success(`${count} question${count !== 1 ? 's' : ''} generated!`, {id: toastId, duration: 4000});
         } catch (e) {
             if (e.name !== 'AbortError') {
-                toast.error(e.message || "Fehler bei der KI-Generierung.", {id: toastId, duration: 4000});
+                toast.error(e.message || "AI generation failed.", {id: toastId, duration: 4000});
             } else {
                 toast.dismiss(toastId);
             }

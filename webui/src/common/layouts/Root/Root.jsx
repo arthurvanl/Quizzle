@@ -51,7 +51,7 @@ export const Root = () => {
 
     return (
         <>
-            <a href="#main-content" className="skip-to-content">Zum Inhalt springen</a>
+            <a href="#main-content" className="skip-to-content">Skip to content</a>
             <Background positionCircle={circlePosition} variant={isHostRoute ? 'host' : 'default'}/>
             <Toaster position="bottom-right" toastOptions={{duration: 4000}} />
             <LoginDialog

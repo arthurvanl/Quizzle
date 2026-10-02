@@ -74,7 +74,7 @@ export const SoundControl = ({className = ""}) => {
                                 step={1}
                                 value={soundEnabled ? masterVolume : 0}
                                 onChange={handleSliderChange}
-                                aria-label="Lautstärke"
+                                aria-label="Volume"
                                 style={{"--fill": `${soundEnabled ? masterVolume : 0}%`}}
                             />
                             <span className="sound-control-value">{soundEnabled ? masterVolume : 0}</span>
@@ -87,7 +87,7 @@ export const SoundControl = ({className = ""}) => {
                 type="button"
                 className="sound-control-button"
                 onClick={toggleSound}
-                aria-label={soundEnabled ? "Ton ausschalten" : "Ton einschalten"}
+                aria-label={soundEnabled ? "Mute sound" : "Unmute sound"}
                 aria-pressed={!soundEnabled}
             >
                 <FontAwesomeIcon icon={icon} aria-hidden="true"/>

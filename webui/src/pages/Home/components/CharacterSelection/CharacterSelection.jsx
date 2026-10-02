@@ -43,14 +43,14 @@ export const CharacterSelection = ({code, submit, isPracticeMode = false}) => {
                 type="button"
                 className="character-display"
                 onClick={() => setShowModal(true)}
-                aria-label={`Charakter: ${selectedCharacter.name}. Klicken zum Ändern`}
+                aria-label={`Character: ${selectedCharacter.name}. Click to change`}
             >
                 <div className="character-emoji">{selectedCharacter.emoji}</div>
                 <span>{selectedCharacter.name}</span>
             </button>
 
             <Input
-                placeholder="Dein Name"
+                placeholder="Your name"
                 value={nameValidation.value}
                 onChange={(e) => nameValidation.setValue(e.target.value)}
                 onBlur={nameValidation.onBlur}
@@ -61,7 +61,7 @@ export const CharacterSelection = ({code, submit, isPracticeMode = false}) => {
             />
 
             <Button
-                text={isSubmitting ? "Beitreten..." : (isPracticeMode ? "Quiz starten" : "Beitreten")}
+                text={isSubmitting ? "Joining..." : (isPracticeMode ? "Start quiz" : "Join")}
                 padding={"0.7rem 1.5rem"}
                 onClick={submitSelection}
                 disabled={!nameValidation.value.trim() || !!nameValidation.error || isSubmitting}
@@ -84,7 +84,7 @@ export const CharacterSelection = ({code, submit, isPracticeMode = false}) => {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div className="modal-header">
-                                <h3>Wähle deinen Charakter</h3>
+                                <h3>Choose your character</h3>
                                 <button
                                     className="close-button"
                                     onClick={() => setShowModal(false)}
@@ -93,7 +93,7 @@ export const CharacterSelection = ({code, submit, isPracticeMode = false}) => {
                                 </button>
                             </div>
 
-                            <div className="character-grid" role="radiogroup" aria-label="Charakter auswählen">
+                            <div className="character-grid" role="radiogroup" aria-label="Choose character">
                                 {CHARACTERS.map((character) => (
                                     <button
                                         type="button"

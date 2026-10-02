@@ -78,7 +78,7 @@ export const SequenceClient = ({question, onSubmit}) => {
             <div className="sequence-client">
                 <div className="sequence-instructions">
                     <FontAwesomeIcon icon={faSort} className="sequence-icon" />
-                    <span>Warten auf Frage...</span>
+                    <span>Waiting for question...</span>
                 </div>
             </div>
         );
@@ -89,11 +89,11 @@ export const SequenceClient = ({question, onSubmit}) => {
             <div className="sequence-client">
                 <div className="sequence-instructions">
                     <FontAwesomeIcon icon={faSort} className="sequence-icon" />
-                    <span>Sortieraufgabe wird geladen...</span>
+                    <span>Loading sorting question...</span>
                 </div>
                 <div className="sequence-error">
-                    <p>Reihenfolge-Fragen benötigen die Antwortinhalte.</p>
-                    <p>Bitte verwenden Sie den Übungsmodus für Reihenfolge-Fragen.</p>
+                    <p>Sequence questions need the answer contents.</p>
+                    <p>Please use practice mode for sequence questions.</p>
                 </div>
             </div>
         );
@@ -104,7 +104,7 @@ export const SequenceClient = ({question, onSubmit}) => {
             <div className="sequence-client">
                 <div className="sequence-instructions">
                     <FontAwesomeIcon icon={faSort} className="sequence-icon" />
-                    <span>Keine Antworten verfügbar</span>
+                    <span>No answers available</span>
                 </div>
             </div>
         );
@@ -135,7 +135,7 @@ export const SequenceClient = ({question, onSubmit}) => {
                 onClick={() => handleTapItem(answer.displayId)}
                 role="option"
                 aria-selected={isPicked}
-                aria-label={answer.type === "image" ? `Antwort ${index + 1}` : answer.content}
+                aria-label={answer.type === "image" ? `Answer ${index + 1}` : answer.content}
                 layout
                 transition={{type: "spring", stiffness: 400, damping: 30}}
             >
@@ -154,8 +154,8 @@ export const SequenceClient = ({question, onSubmit}) => {
             <div className="sequence-instructions">
                 <FontAwesomeIcon icon={faSort} className="sequence-icon" />
                 <span>{isTouchDevice
-                    ? "Tippe die Antworten in der richtigen Reihenfolge an"
-                    : "Ziehen Sie die Antworten in die richtige Reihenfolge"
+                    ? "Tap the answers in the correct order"
+                    : "Drag the answers into the correct order"
                 }</span>
             </div>
 

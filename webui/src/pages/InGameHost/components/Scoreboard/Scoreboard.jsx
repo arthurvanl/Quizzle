@@ -108,12 +108,12 @@ export const Scoreboard = ({scoreboard, nextQuestion, isEnd, hideTop3}) => {
     return (
         <div className="scoreboard">
             <div className="top-area">
-                {!isEnd && <Button onClick={nextQuestion} text="Weiter"
+                {!isEnd && <Button onClick={nextQuestion} text="Next"
                         padding="1rem 1.5rem" icon={faForward}/>}
-                {isEnd && <Button onClick={goHome} text="Startseite"
+                {isEnd && <Button onClick={goHome} text="Home"
                         padding="1rem 1.5rem" icon={faHouse}/>}
             </div>
-            {!hideTop3 && <h1>{isEnd ? "Endstand" : "Scoreboard"}</h1>}
+            {!hideTop3 && <h1>{isEnd ? "Final standings" : "Leaderboard"}</h1>}
 
             <div className="scoreboard-players">
                 <LayoutGroup>
@@ -185,7 +185,7 @@ export const Scoreboard = ({scoreboard, nextQuestion, isEnd, hideTop3}) => {
                                         )}
                                     </h2>
                                     {rising && (
-                                        <span className="rise-indicator" aria-label={`${player.positionChange} Plätze nach oben`}>
+                                        <span className="rise-indicator" aria-label={`${player.positionChange} places up`}>
                                             <FontAwesomeIcon icon={faArrowUp} />
                                         </span>
                                     )}

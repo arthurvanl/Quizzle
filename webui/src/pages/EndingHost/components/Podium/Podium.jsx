@@ -90,7 +90,7 @@ export const Podium = ({scoreboard, analytics, totalQuestions}) => {
                                 </div>
                                 {stats && (
                                     <div className="podium-accuracy">
-                                        {stats.correctAnswers} von {totalQuestions || stats.totalAnswered} richtig
+                                        {stats.correctAnswers} of {totalQuestions || stats.totalAnswered} correct
                                     </div>
                                 )}
                             </motion.div>

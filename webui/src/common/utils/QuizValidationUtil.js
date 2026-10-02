@@ -4,9 +4,9 @@ export class QuizValidationUtil {
     static LIMITS = {MAX_QUESTIONS: 50, MIN_QUESTIONS: 1, MAX_QUESTION_LENGTH: 200, MAX_ANSWER_LENGTH: 150};
 
     static validateQuiz(questions, title) {
-        if (!title || title.trim() === "") return { isValid: false, error: "Quiz-Titel darf nicht leer sein." };
-        if (questions.length === 0) return { isValid: false, error: "Es muss mindestens eine Frage vorhanden sein." };
-        if (questions.length > this.LIMITS.MAX_QUESTIONS) return { isValid: false, error: `Quiz darf maximal ${this.LIMITS.MAX_QUESTIONS} Fragen enthalten.` };
+        if (!title || title.trim() === "") return { isValid: false, error: "Quiz title must not be empty." };
+        if (questions.length === 0) return { isValid: false, error: "There must be at least one question." };
+        if (questions.length > this.LIMITS.MAX_QUESTIONS) return { isValid: false, error: `Quiz may contain at most ${this.LIMITS.MAX_QUESTIONS} questions.` };
 
         for (const question of questions) {
             const questionValidation = this.validateQuestion(question);
@@ -16,8 +16,8 @@ export class QuizValidationUtil {
     }
 
     static validateQuestion(question) {
-        if (!question.title || question.title.trim() === "") return { isValid: false, error: "Fragen dürfen nicht leer sein." };
-        if (question.title.trim().length > this.LIMITS.MAX_QUESTION_LENGTH) return { isValid: false, error: `Fragen dürfen maximal ${this.LIMITS.MAX_QUESTION_LENGTH} Zeichen lang sein.` };
+        if (!question.title || question.title.trim() === "") return { isValid: false, error: "Questions must not be empty." };
+        if (question.title.trim().length > this.LIMITS.MAX_QUESTION_LENGTH) return { isValid: false, error: `Questions may be at most ${this.LIMITS.MAX_QUESTION_LENGTH} characters long.` };
         const questionType = question.type || QUESTION_TYPES.MULTIPLE_CHOICE;
         return this.validateAnswers(question.answers || [], questionType);
     }
@@ -40,59 +40,59 @@ export class QuizValidationUtil {
     }
 
     static validateTextAnswers(answers) {
-        if (answers.some(a => !a.content || a.content.trim() === "")) return { isValid: false, error: "Text-Antworten dürfen nicht leer sein." };
+        if (answers.some(a => !a.content || a.content.trim() === "")) return { isValid: false, error: "Text answers must not be empty." };
         return { isValid: true };
     }
 
     static validateTrueFalseAnswers(answers) {
-        if (answers.length !== 2) return { isValid: false, error: "Wahr/Falsch-Fragen müssen genau zwei Antworten haben." };
-        if (!answers.some(a => a.is_correct)) return { isValid: false, error: "Wahr/Falsch-Fragen müssen mindestens eine richtige Antwort haben." };
+        if (answers.length !== 2) return { isValid: false, error: "True/False questions must have exactly two answers." };
+        if (!answers.some(a => a.is_correct)) return { isValid: false, error: "True/False questions must have at least one correct answer." };
         return { isValid: true };
     }
 
     static validateMultipleChoiceAnswers(answers) {
-        if (answers.filter(a => a.is_correct).length === 0) return { isValid: false, error: "Jede Multiple-Choice-Frage muss mindestens eine richtige Antwort haben." };
-        if (answers.some(a => (!a.content || a.content.trim() === "") && a.imageId === undefined)) return { isValid: false, error: "Multiple-Choice-Antworten dürfen nicht leer sein." };
-        if (answers.some(a => a.content?.trim().length > this.LIMITS.MAX_ANSWER_LENGTH && a.type === QUESTION_TYPES.TEXT)) return { isValid: false, error: `Multiple-Choice-Antworten dürfen maximal ${this.LIMITS.MAX_ANSWER_LENGTH} Zeichen lang sein.` };
+        if (answers.filter(a => a.is_correct).length === 0) return { isValid: false, error: "Every multiple-choice question must have at least one correct answer." };
+        if (answers.some(a => (!a.content || a.content.trim() === "") && a.imageId === undefined)) return { isValid: false, error: "Multiple-choice answers must not be empty." };
+        if (answers.some(a => a.content?.trim().length > this.LIMITS.MAX_ANSWER_LENGTH && a.type === QUESTION_TYPES.TEXT)) return { isValid: false, error: `Multiple-choice answers may be at most ${this.LIMITS.MAX_ANSWER_LENGTH} characters long.` };
         return { isValid: true };
     }
 
     static validateSequenceAnswers(answers) {
-        if (answers.some(a => !a.content || a.content.trim() === "")) return { isValid: false, error: "Reihenfolge-Antworten dürfen nicht leer sein." };
-        if (answers.some(a => a.content?.trim().length > this.LIMITS.MAX_ANSWER_LENGTH)) return { isValid: false, error: `Reihenfolge-Antworten dürfen maximal ${this.LIMITS.MAX_ANSWER_LENGTH} Zeichen lang sein.` };
+        if (answers.some(a => !a.content || a.content.trim() === "")) return { isValid: false, error: "Sequence answers must not be empty." };
+        if (answers.some(a => a.content?.trim().length > this.LIMITS.MAX_ANSWER_LENGTH)) return { isValid: false, error: `Sequence answers may be at most ${this.LIMITS.MAX_ANSWER_LENGTH} characters long.` };
         return { isValid: true };
     }
 
     static validateSliderAnswers(answers) {
-        if (!answers || answers.length !== 1) return { isValid: false, error: "Schieberegler-Fragen müssen genau eine Antwort-Konfiguration haben." };
+        if (!answers || answers.length !== 1) return { isValid: false, error: "Slider questions must have exactly one answer configuration." };
         const config = answers[0];
-        if (config.correctValue === undefined || config.correctValue === null) return { isValid: false, error: "Schieberegler-Fragen müssen einen korrekten Wert haben." };
-        if (config.min === undefined || config.max === undefined) return { isValid: false, error: "Schieberegler-Fragen müssen einen Min- und Max-Wert haben." };
-        if (config.min >= config.max) return { isValid: false, error: "Der Minimalwert muss kleiner als der Maximalwert sein." };
-        if (config.correctValue < config.min || config.correctValue > config.max) return { isValid: false, error: "Der korrekte Wert muss zwischen Min und Max liegen." };
-        if (config.step !== undefined && config.step <= 0) return { isValid: false, error: "Der Schrittwert muss größer als 0 sein." };
+        if (config.correctValue === undefined || config.correctValue === null) return { isValid: false, error: "Slider questions must have a correct value." };
+        if (config.min === undefined || config.max === undefined) return { isValid: false, error: "Slider questions must have a min and max value." };
+        if (config.min >= config.max) return { isValid: false, error: "The minimum value must be less than the maximum value." };
+        if (config.correctValue < config.min || config.correctValue > config.max) return { isValid: false, error: "The correct value must be between min and max." };
+        if (config.step !== undefined && config.step <= 0) return { isValid: false, error: "The step value must be greater than 0." };
         return { isValid: true };
     }
 
     static getMinAnswersErrorMessage(questionType, minAnswers) {
         switch (questionType) {
-            case QUESTION_TYPES.TEXT: return "Text-Fragen müssen mindestens eine akzeptierte Antwort haben.";
-            case QUESTION_TYPES.TRUE_FALSE: return "Wahr/Falsch-Fragen müssen genau zwei Antworten haben.";
-            case QUESTION_TYPES.SEQUENCE: return "Reihenfolge-Fragen müssen mindestens zwei Antworten haben.";
-            case QUESTION_TYPES.SLIDER: return "Schieberegler-Fragen müssen eine Konfiguration haben.";
+            case QUESTION_TYPES.TEXT: return "Text questions must have at least one accepted answer.";
+            case QUESTION_TYPES.TRUE_FALSE: return "True/False questions must have exactly two answers.";
+            case QUESTION_TYPES.SEQUENCE: return "Sequence questions must have at least two answers.";
+            case QUESTION_TYPES.SLIDER: return "Slider questions must have a configuration.";
             case QUESTION_TYPES.MULTIPLE_CHOICE:
-            default: return "Multiple-Choice-Fragen müssen mindestens zwei Antworten haben.";
+            default: return "Multiple-choice questions must have at least two answers.";
         }
     }
 
     static getMaxAnswersErrorMessage(questionType, maxAnswers) {
         switch (questionType) {
-            case QUESTION_TYPES.TEXT: return `Text-Fragen dürfen maximal ${maxAnswers} akzeptierte Antworten haben.`;
-            case QUESTION_TYPES.TRUE_FALSE: return "Wahr/Falsch-Fragen müssen genau zwei Antworten haben.";
-            case QUESTION_TYPES.SEQUENCE: return `Reihenfolge-Fragen dürfen maximal ${maxAnswers} Antworten haben.`;
-            case QUESTION_TYPES.SLIDER: return "Schieberegler-Fragen dürfen nur eine Konfiguration haben.";
+            case QUESTION_TYPES.TEXT: return `Text questions may have at most ${maxAnswers} accepted answers.`;
+            case QUESTION_TYPES.TRUE_FALSE: return "True/False questions must have exactly two answers.";
+            case QUESTION_TYPES.SEQUENCE: return `Sequence questions may have at most ${maxAnswers} answers.`;
+            case QUESTION_TYPES.SLIDER: return "Slider questions may only have one configuration.";
             case QUESTION_TYPES.MULTIPLE_CHOICE:
-            default: return `Multiple-Choice-Fragen dürfen maximal ${maxAnswers} Antworten haben.`;
+            default: return `Multiple-choice questions may have at most ${maxAnswers} answers.`;
         }
     }
 

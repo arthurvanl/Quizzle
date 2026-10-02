@@ -171,7 +171,7 @@ module.exports = (io, socket) => {
     socket.on('LOCK_ROOM', (data, callback) => {
         if (!validateCallback(callback)) return;
         if (!isHostAuthorized(socket, currentRoomCode) || !validateRoomState(currentRoomCode, 'waiting')) {
-            return callback({success: false, error: 'Nicht autorisiert'});
+            return callback({success: false, error: 'Not authorized'});
         }
 
         const room = rooms[currentRoomCode];
@@ -183,11 +183,11 @@ module.exports = (io, socket) => {
     socket.on('KICK_OFFLINE_PLAYER', (data, callback) => {
         if (!validateCallback(callback)) return;
         if (!data?.name || !isHostAuthorized(socket, currentRoomCode)) {
-            return callback({success: false, error: 'Nicht autorisiert'});
+            return callback({success: false, error: 'Not authorized'});
         }
 
         const room = rooms[currentRoomCode];
-        if (!room) return callback({success: false, error: 'Raum nicht gefunden'});
+        if (!room) return callback({success: false, error: 'Room not found'});
 
         const roomSessions = getAllSessionsForRoom(currentRoomCode);
         let removedSessions = 0;
@@ -218,9 +218,9 @@ module.exports = (io, socket) => {
                 name: data.name,
                 playerId: playerId
             });
-            callback({success: true, message: `Spieler ${data.name} wurde entfernt`});
+            callback({success: true, message: `Player ${data.name} was removed`});
         } else {
-            callback({success: false, error: 'Spieler nicht gefunden'});
+            callback({success: false, error: 'Player not found'});
         }
     });
 
@@ -242,7 +242,7 @@ module.exports = (io, socket) => {
         const room = rooms[data.code];
         if (room && room.state === 'waiting' && !room.players[socket.id]) {
             if (room.locked) {
-                return callback({success: false, error: 'Dieser Raum ist gesperrt'});
+                return callback({success: false, error: 'This room is locked'});
             }
             
             const {value} = joinRoom.validate(data);
@@ -263,7 +263,7 @@ module.exports = (io, socket) => {
             });
             const existingNames = Object.values(room.players).map(p => p.name.toLowerCase());
             if (existingNames.includes(sanitizedName.toLowerCase())) {
-                return callback({success: false, error: 'Dieser Name ist bereits vergeben'});
+                return callback({success: false, error: 'This name is already taken'});
             }
 
             socket.join(data.code.toString());
@@ -278,7 +278,7 @@ module.exports = (io, socket) => {
             currentRoomCode = data.code;
             callback({success: true, sessionId});
         } else {
-            callback({success: false, error: 'Raum existiert nicht oder Spiel hat bereits begonnen'});
+            callback({success: false, error: 'Room does not exist or the game has already started'});
         }
     });
 
@@ -288,18 +288,18 @@ module.exports = (io, socket) => {
         const { sessionId } = data;
         
         if (!sessionId) {
-            return callback({success: false, error: 'Keine Session ID', sessionInvalid: true});
+            return callback({success: false, error: 'No session ID', sessionInvalid: true});
         }
         
         const session = getSession(sessionId);
         if (!session) {
-            return callback({success: false, error: 'Session nicht gefunden', sessionInvalid: true});
+            return callback({success: false, error: 'Session not found', sessionInvalid: true});
         }
         
         const room = rooms[session.roomCode];
         if (!room) {
             invalidateSession(sessionId);
-            return callback({success: false, error: 'Raum nicht mehr verfügbar', sessionInvalid: true});
+            return callback({success: false, error: 'Room is no longer available', sessionInvalid: true});
         }
 
         if (updateSessionSocket(sessionId, socket.id)) {
@@ -380,7 +380,7 @@ module.exports = (io, socket) => {
             
             callback({success: true, gameState});
         } else {
-            callback({success: false, error: 'Fehler beim Wiederherstellen der Session'});
+            callback({success: false, error: 'Error restoring session'});
         }
     });
 
@@ -416,8 +416,8 @@ module.exports = (io, socket) => {
 
     socket.on('SHOW_QUESTION', (data, callback) => {
         if (!validateCallback(callback)) return;
-        if (!rooms[currentRoomCode]) return callback({success: false, error: 'Raum nicht gefunden'});
-        if (!isHostAuthorized(socket, currentRoomCode)) return callback({success: false, error: 'Nicht autorisiert'});
+        if (!rooms[currentRoomCode]) return callback({success: false, error: 'Room not found'});
+        if (!isHostAuthorized(socket, currentRoomCode)) return callback({success: false, error: 'Not authorized'});
         if (handleValidationError(callback, questionValidation, data)) return;
 
         const room = rooms[currentRoomCode];
@@ -466,21 +466,21 @@ module.exports = (io, socket) => {
     socket.on('SUBMIT_ANSWER', (data, callback) => {
         if (!validateCallback(callback)) return;
         if (!rooms[currentRoomCode]?.players[socket.id]) {
-            return callback({success: false, error: 'Spieler nicht im Raum'});
+            return callback({success: false, error: 'Player not in room'});
         }
 
         const room = rooms[currentRoomCode];
         if (room.currentQuestion.isCompleted) {
-            return callback({success: false, error: 'Diese Frage wurde bereits abgeschlossen'});
+            return callback({success: false, error: 'This question has already ended'});
         }
 
         if (!room.currentQuestion.answersReady) {
-            return callback({success: false, error: 'Antworten sind noch nicht bereit'});
+            return callback({success: false, error: 'Answers are not ready yet'});
         }
 
         const playerAnswers = room.playerAnswers;
         if (playerAnswers[playerAnswers.length - 1][socket.id]) {
-            return callback({success: false, error: 'Antwort bereits abgegeben'});
+            return callback({success: false, error: 'Answer already submitted'});
         }
 
         if (handleValidationError(callback, answerQuestion, data)) return;

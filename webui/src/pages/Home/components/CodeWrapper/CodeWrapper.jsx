@@ -105,7 +105,7 @@ export const CodeWrapper = ({onChange, resetCode, errorClass}) => {
     };
 
     return (
-        <div className={"code-wrapper" + (errorClass ? " " + errorClass : "")} ref={codeWrapper} role="group" aria-label="Quiz-Code eingeben">
+        <div className={"code-wrapper" + (errorClass ? " " + errorClass : "")} ref={codeWrapper} role="group" aria-label="Quiz-Enter code">
             {[...Array(4)].map((_, index) =>
                 <input
                     key={index}
@@ -119,7 +119,7 @@ export const CodeWrapper = ({onChange, resetCode, errorClass}) => {
                     onFocus={handleFocus}
                     autoComplete="off"
                     style={{textTransform: 'uppercase'}}
-                    aria-label={`Zeichen ${index + 1} von 4`}
+                    aria-label={`Character ${index + 1} of 4`}
                 />
             )}
         </div>

@@ -4,7 +4,7 @@ import {faCheck, faX, faCheckCircle, faToggleOn, faKeyboard, faSort, faSliders} 
 import AnswerContent from "@/common/components/AnswerContent";
 import {QUESTION_TYPES} from "@/common/constants/QuestionTypes.js";
 
-const TRUE_FALSE_LABELS = ["Wahr", "Falsch"];
+const TRUE_FALSE_LABELS = ["True", "False"];
 
 const getAnswerColor = (index) => {
     const colors = ["orange", "blue", "green", "red", "purple", "teal"];
@@ -37,7 +37,7 @@ const MultipleChoiceReview = ({selection, revealAnswers, answerLabels, practiceQ
                 } else if (label) {
                     content = <span className="review-mc-answer-text">{label}</span>;
                 } else {
-                    content = <span className="review-mc-placeholder">Antwort {index + 1}</span>;
+                    content = <span className="review-mc-placeholder">Answer {index + 1}</span>;
                 }
                 return (
                     <div
@@ -104,14 +104,14 @@ const TextReview = ({userSubmittedAnswer, revealAnswers}) => {
     return (
         <div className="review-text-wrapper">
             <div className="review-text-box review-text-your">
-                <span className="review-text-label">Deine Antwort</span>
+                <span className="review-text-label">Your answer</span>
                 <span className="review-text-value">
-                    {text ? text : <em>Keine Antwort abgegeben</em>}
+                    {text ? text : <em>No answer submitted</em>}
                 </span>
             </div>
             {correctList.length > 0 && (
                 <div className="review-text-box review-text-correct">
-                    <span className="review-text-label">Richtige Antwort{correctList.length > 1 ? 'en' : ''}</span>
+                    <span className="review-text-label">Correct answer{correctList.length > 1 ? 's' : ''}</span>
                     <div className="review-text-correct-list">
                         {correctList.map((value, i) => (
                             <span key={i} className="review-text-pill">{value}</span>
@@ -145,12 +145,12 @@ const SliderReview = ({userSubmittedAnswer, sliderAnswerData}) => {
         <div className="review-slider-wrapper">
             <div className="review-slider-values">
                 <div className="review-slider-value-box review-slider-your">
-                    <span className="review-slider-label">Deine Antwort</span>
+                    <span className="review-slider-label">Your answer</span>
                     <span className="review-slider-number">{Number.isFinite(userValue) ? userValue : '-'}</span>
                 </div>
                 {correctValue !== null && (
                     <div className="review-slider-value-box review-slider-target">
-                        <span className="review-slider-label">Richtiger Wert</span>
+                        <span className="review-slider-label">Correct value</span>
                         <span className="review-slider-number">{correctValue}</span>
                     </div>
                 )}
@@ -195,7 +195,7 @@ const SequenceReview = ({userSubmittedAnswer, revealAnswers, practiceQuestion}) 
 
     if (order.length === 0) {
         return (
-            <div className="review-sequence-empty">Keine Reihenfolge abgegeben</div>
+            <div className="review-sequence-empty">No order submitted</div>
         );
     }
 
@@ -213,7 +213,7 @@ const SequenceReview = ({userSubmittedAnswer, revealAnswers, practiceQuestion}) 
                         <div className="review-sequence-content">
                             {answer
                                 ? <AnswerContent answer={answer} index={originalIndex} className="review-sequence-answer"/>
-                                : <span>Antwort {originalIndex + 1}</span>}
+                                : <span>Answer {originalIndex + 1}</span>}
                         </div>
                         <div className="review-sequence-status">
                             <FontAwesomeIcon icon={isCorrectSpot ? faCheck : faX}/>
@@ -288,10 +288,10 @@ export const ClientAnswerReview = ({
     }
 
     return (
-        <section className="client-answer-review" aria-label="Deine abgegebene Antwort">
+        <section className="client-answer-review" aria-label="Your submitted answer">
             <header className="client-answer-review-header">
                 <FontAwesomeIcon icon={headerIcon}/>
-                <span>Deine Antwort</span>
+                <span>Your answer</span>
             </header>
             <div className="client-answer-review-body">
                 {body}

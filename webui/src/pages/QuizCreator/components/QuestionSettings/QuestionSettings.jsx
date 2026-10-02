@@ -20,37 +20,37 @@ export const QuestionSettings = ({question, onChange, onCommit, defaultTimer = 6
         return question.pointMultiplier;
     });
 
-    const defaultTimerLabel = defaultTimer === -1 ? "Unbegrenzt" : `${defaultTimer}s`;
+    const defaultTimerLabel = defaultTimer === -1 ? "Unlimited" : `${defaultTimer}s`;
 
     const timerOptions = [
         {
             value: "default",
             label: `Standard (${defaultTimerLabel})`,
-            description: "Aus Quiz-Einstellungen",
+            description: "From quiz settings",
             icon: faClock
         },
         {
             value: "30",
-            label: "30 Sekunden",
-            description: "Schnelle Fragen",
+            label: "30 seconds",
+            description: "Quick questions",
             icon: faClock
         },
         {
             value: "60",
-            label: "60 Sekunden",
-            description: "Eine Minute pro Frage",
+            label: "60 seconds",
+            description: "One minute per question",
             icon: faClock
         },
         {
             value: "120",
-            label: "2 Minuten",
-            description: "Mehr Zeit zum Nachdenken",
+            label: "2 minutes",
+            description: "More time to think",
             icon: faClock
         },
         {
             value: "unlimited",
-            label: "Unbegrenzt",
-            description: "Kein Zeitlimit",
+            label: "Unlimited",
+            description: "No time limit",
             icon: faInfinity
         }
     ];
@@ -59,19 +59,19 @@ export const QuestionSettings = ({question, onChange, onCommit, defaultTimer = 6
         {
             value: "standard",
             label: "Standard",
-            description: "Normale Punkteverteilung",
+            description: "Normal scoring",
             icon: faCoins
         },
         {
             value: "none",
-            label: "Keine Punkte",
-            description: "Für diese Frage gibt es keine Punkte",
+            label: "No points",
+            description: "This question awards no points",
             icon: faCoins
         },
         {
             value: "double",
-            label: "Doppelte Punkte",
-            description: "Diese Frage bringt doppelte Punkte",
+            label: "Double points",
+            description: "This question awards double points",
             icon: faCoins
         }
     ];
@@ -148,35 +148,35 @@ export const QuestionSettings = ({question, onChange, onCommit, defaultTimer = 6
             transition={{duration: 0.25, delay: 0.2, ease: "easeOut"}}
         >
             <div className="settings-header">
-                <h3>Fragen-Einstellungen</h3>
+                <h3>Question settings</h3>
             </div>
 
             <div className="setting-group">
                 <div className="setting-label">
                     <FontAwesomeIcon icon={faClock}/>
-                    <span>Zeitlimit</span>
+                    <span>Time limit</span>
                 </div>
 
-                <SelectBox value={selectedTimer} onChange={handleTimerChange} options={timerOptions} placeholder="Timer auswählen..."/>
+                <SelectBox value={selectedTimer} onChange={handleTimerChange} options={timerOptions} placeholder="Select timer..."/>
             </div>
 
             <div className="setting-group">
                 <div className="setting-label">
                     <FontAwesomeIcon icon={faCoins}/>
-                    <span>Punkteverteilung</span>
+                    <span>Scoring</span>
                 </div>
 
-                <SelectBox value={selectedPointMultiplier} onChange={handlePointMultiplierChange} options={pointMultiplierOptions} placeholder="Punkteverteilung auswählen..."/>
+                <SelectBox value={selectedPointMultiplier} onChange={handlePointMultiplierChange} options={pointMultiplierOptions} placeholder="Select scoring..."/>
             </div>
 
             {isSliderType && (
                 <div className="setting-group">
                     <div className="setting-label">
                         <FontAwesomeIcon icon={faSliders}/>
-                        <span>Antwort-Marge</span>
+                        <span>Answer margin</span>
                     </div>
 
-                    <SelectBox value={currentAnswerMargin} onChange={handleAnswerMarginChange} options={answerMarginOptions} placeholder="Antwort-Marge auswählen..."/>
+                    <SelectBox value={currentAnswerMargin} onChange={handleAnswerMarginChange} options={answerMarginOptions} placeholder="Select answer margin..."/>
                 </div>
             )}
         </motion.div>

@@ -31,11 +31,11 @@ export const DoublePointsAnimation = ({isVisible, onComplete}) => {
                         </motion.div>
                         <motion.h1 className="double-points-title" initial={{opacity: 0, y: 20}}
                                    animate={{opacity: 1, y: 0}} transition={{delay: 0.5, duration: 0.6}}>
-                            Doppelte Punkte!
+                            Double points!
                         </motion.h1>
                         <motion.p className="double-points-subtitle" initial={{opacity: 0, y: 20}}
                                   animate={{opacity: 1, y: 0}} transition={{delay: 0.8, duration: 0.6}}>
-                            Diese Frage bringt die doppelte Punktzahl!
+                            This question is worth double points!
                         </motion.p>
                     </motion.div>
                 </motion.div>

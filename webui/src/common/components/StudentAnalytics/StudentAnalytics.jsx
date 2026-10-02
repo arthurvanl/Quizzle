@@ -13,10 +13,10 @@ const StudentAnalytics = ({analyticsData, isLiveQuiz}) => {
     return (
         <div className="student-analytics">
             <div className="sa-toolbar">
-                <button className={sortBy === 'accuracy' ? 'active' : ''} onClick={() => setSortBy('accuracy')}>Nach Genauigkeit</button>
-                <button className={sortBy === 'correctAnswers' ? 'active' : ''} onClick={() => setSortBy('correctAnswers')}>Nach Richtigen</button>
+                <button className={sortBy === 'accuracy' ? 'active' : ''} onClick={() => setSortBy('accuracy')}>By accuracy</button>
+                <button className={sortBy === 'correctAnswers' ? 'active' : ''} onClick={() => setSortBy('correctAnswers')}>By correct answers</button>
                 {isLiveQuiz && (
-                    <button className={sortBy === 'totalPoints' ? 'active' : ''} onClick={() => setSortBy('totalPoints')}>Nach Punkten</button>
+                    <button className={sortBy === 'totalPoints' ? 'active' : ''} onClick={() => setSortBy('totalPoints')}>By points</button>
                 )}
             </div>
 

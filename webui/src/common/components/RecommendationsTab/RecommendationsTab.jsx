@@ -20,7 +20,7 @@ const RecommendationsTab = ({analyticsData}) => {
         recommendations.push({
             type: 'urgent',
             icon: faExclamationTriangle,
-            title: `${strugglingStudents.length} Schüler benötigen Hilfe`,
+            title: `${strugglingStudents.length} students need help`,
             students: strugglingStudents.map(s => `${s.name} (${s.accuracy}%)`)
         });
     }
@@ -29,8 +29,8 @@ const RecommendationsTab = ({analyticsData}) => {
         recommendations.push({
             type: 'warning',
             icon: faQuestionCircle,
-            title: `${hardQuestions.length} schwere Fragen`,
-            questions: hardQuestions.map(q => `Frage ${q.questionIndex + 1}: ${q.correctPercentage}%`)
+            title: `${hardQuestions.length} hard questions`,
+            questions: hardQuestions.map(q => `Question ${q.questionIndex + 1}: ${q.correctPercentage}%`)
         });
     }
 
@@ -38,15 +38,15 @@ const RecommendationsTab = ({analyticsData}) => {
         recommendations.push({
             type: 'urgent',
             icon: faUsers,
-            title: `Niedrige Klassenleistung: ${classAnalytics.averageAccuracy}%`,
-            action: 'Wiederholung der Inhalte empfohlen'
+            title: `Low class performance: ${classAnalytics.averageAccuracy}%`,
+            action: 'Reviewing the material is recommended'
         });
     } else if (classAnalytics.averageAccuracy >= 80) {
         recommendations.push({
             type: 'success',
             icon: faCheckCircle,
-            title: `Gute Klassenleistung: ${classAnalytics.averageAccuracy}%`,
-            action: 'Klasse ist bereit für neue Themen'
+            title: `Good class performance: ${classAnalytics.averageAccuracy}%`,
+            action: 'Class is ready for new topics'
         });
     }
 
@@ -71,7 +71,7 @@ const RecommendationsTab = ({analyticsData}) => {
 
                                 {rec.students && (
                                     <div className="recommendation-details">
-                                        <h4>Schüler:</h4>
+                                        <h4>Students:</h4>
                                         <ul>
                                             {rec.students.map((student, i) => (
                                                 <li key={i}>{student}</li>
@@ -82,7 +82,7 @@ const RecommendationsTab = ({analyticsData}) => {
 
                                 {rec.questions && (
                                     <div className="recommendation-details">
-                                        <h4>Fragen:</h4>
+                                        <h4>Questions:</h4>
                                         <ul>
                                             {rec.questions.map((question, i) => (
                                                 <li key={i}>{question}</li>
@@ -97,8 +97,8 @@ const RecommendationsTab = ({analyticsData}) => {
             ) : (
                 <div className="no-recommendations">
                     <FontAwesomeIcon icon={faCheckCircle}/>
-                    <h3>Keine Probleme erkannt</h3>
-                    <p>Die Klasse zeigt gute Leistungen.</p>
+                    <h3>No issues detected</h3>
+                    <p>The class is performing well.</p>
                 </div>
             )}
         </div>

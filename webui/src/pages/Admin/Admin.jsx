@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 import "./styles.sass";
 
 const AI_PROVIDERS = [
-    {value: '', label: 'Deaktiviert'},
+    {value: '', label: 'Disabled'},
     {value: 'openai', label: 'OpenAI'},
     {value: 'anthropic', label: 'Anthropic'},
     {value: 'google', label: 'Google'},
@@ -106,7 +106,7 @@ export const Admin = () => {
             setBrandImprint(data.branding?.imprint || '');
             setBrandPrivacy(data.branding?.privacy || '');
         } catch (error) {
-            toast.error('Einstellungen konnten nicht geladen werden.');
+            toast.error('Could not load settings.');
         } finally {
             setLoading(false);
         }
@@ -117,7 +117,7 @@ export const Admin = () => {
             const data = await jsonRequest('/admin/users');
             setUsers(data.users || []);
         } catch (error) {
-            toast.error('Benutzer konnten nicht geladen werden.');
+            toast.error('Could not load users.');
         }
     };
 
@@ -126,9 +126,9 @@ export const Admin = () => {
             await putRequest('/admin/settings', {
                 config: {ai: {provider: aiProvider, apiKey: aiApiKey, model: aiModel, baseUrl: aiBaseUrl}}
             });
-            toast.success('KI-Einstellungen gespeichert.');
+            toast.success('AI settings saved.');
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Speichern.');
+            toast.error(error.message || 'Failed to save.');
         }
     };
 
@@ -137,9 +137,9 @@ export const Admin = () => {
             await putRequest('/admin/settings', {
                 config: {media: {unsplashAccessKey, giphyApiKey}}
             });
-            toast.success('Medien-Einstellungen gespeichert.');
+            toast.success('Media settings saved.');
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Speichern.');
+            toast.error(error.message || 'Failed to save.');
         }
     };
 
@@ -148,9 +148,9 @@ export const Admin = () => {
             await putRequest('/admin/settings', {
                 branding: {name: brandName, color: brandColor, imprint: brandImprint, privacy: brandPrivacy}
             });
-            toast.success('Branding gespeichert. Änderungen werden nach einem Neustart wirksam.');
+            toast.success('Branding saved. Changes take effect after a restart.');
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Speichern.');
+            toast.error(error.message || 'Failed to save.');
         }
     };
 
@@ -159,7 +159,7 @@ export const Admin = () => {
         if (!file) return;
 
         if (file.size > 5 * 1024 * 1024) {
-            toast.error('Bild ist zu groß (max. 5 MB).');
+            toast.error('Image is too large (max. 5 MB).');
             return;
         }
 
@@ -177,30 +177,30 @@ export const Admin = () => {
 
         try {
             await putRequest(`/admin/branding/${type}`, {image});
-            toast.success(`${type === 'logo' ? 'Logo' : 'Banner'} hochgeladen.`);
+            toast.success(`${type === 'logo' ? 'Logo' : 'Banner'} uploaded.`);
             if (type === 'logo') setLogoPreview(null);
             else setTitlePreview(null);
             refreshBranding?.();
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Hochladen.');
+            toast.error(error.message || 'Failed to upload.');
         }
     };
 
     const resetImage = async (type) => {
         try {
             await deleteRequest(`/admin/branding/${type}`);
-            toast.success(`${type === 'logo' ? 'Logo' : 'Banner'} zurückgesetzt.`);
+            toast.success(`${type === 'logo' ? 'Logo' : 'Banner'} reset.`);
             if (type === 'logo') setLogoPreview(null);
             else setTitlePreview(null);
             refreshBranding?.();
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Zurücksetzen.');
+            toast.error(error.message || 'Failed to reset.');
         }
     };
 
     const createUser = async () => {
         if (!newUsername.trim() || !newPassword) {
-            setNewUserError('Alle Felder sind erforderlich.');
+            setNewUserError('All fields are required.');
             return;
         }
         try {
@@ -209,7 +209,7 @@ export const Admin = () => {
                 password: newPassword,
                 role: newRole
             });
-            toast.success(`Benutzer "${newUsername}" erstellt.`);
+            toast.success(`User "${newUsername}" created.`);
             setShowNewUserDialog(false);
             setNewUsername('');
             setNewPassword('');
@@ -217,18 +217,18 @@ export const Admin = () => {
             setNewUserError('');
             loadUsers();
         } catch (error) {
-            setNewUserError(error.message || 'Fehler beim Erstellen.');
+            setNewUserError(error.message || 'Failed to create.');
         }
     };
 
     const deleteUserHandler = async (userId, username) => {
-        if (!confirm(`Benutzer "${username}" wirklich löschen?`)) return;
+        if (!confirm(`Really delete user "${username}"?`)) return;
         try {
             await deleteRequest(`/admin/users/${userId}`);
-            toast.success(`Benutzer "${username}" gelöscht.`);
+            toast.success(`User "${username}" deleted.`);
             loadUsers();
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Löschen.');
+            toast.error(error.message || 'Failed to delete.');
         }
     };
 
@@ -236,26 +236,26 @@ export const Admin = () => {
         const newRole = currentRole === 'admin' ? 'teacher' : 'admin';
         try {
             await putRequest(`/admin/users/${userId}/role`, {role: newRole});
-            toast.success('Rolle aktualisiert.');
+            toast.success('Role updated.');
             loadUsers();
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Aktualisieren.');
+            toast.error(error.message || 'Failed to update.');
         }
     };
 
     const resetPassword = async () => {
         if (!newPasswordValue || newPasswordValue.length < 6) {
-            toast.error('Passwort muss mindestens 6 Zeichen lang sein.');
+            toast.error('Password must be at least 6 characters long.');
             return;
         }
         try {
             await putRequest(`/admin/users/${passwordResetUserId}/password`, {password: newPasswordValue});
-            toast.success('Passwort zurückgesetzt.');
+            toast.success('Password reset.');
             setShowPasswordDialog(false);
             setPasswordResetUserId(null);
             setNewPasswordValue('');
         } catch (error) {
-            toast.error(error.message || 'Fehler beim Zurücksetzen.');
+            toast.error(error.message || 'Failed to reset.');
         }
     };
 
@@ -275,88 +275,88 @@ export const Admin = () => {
                         <FontAwesomeIcon icon={faShieldAlt}/>
                         {user?.username}
                     </span>
-                    <Button text="Abmelden" icon={faRightFromBracket} type="secondary compact" onClick={handleLogout}/>
+                    <Button text="Log out" icon={faRightFromBracket} type="secondary compact" onClick={handleLogout}/>
                 </div>
             </motion.div>
 
             <motion.div className="admin-content" initial={{opacity: 0, y: 20}} animate={{opacity: 1, y: 0}} transition={{delay: 0.1}}>
                 <div className="admin-sidebar">
                     <button className={`sidebar-item ${activeTab === 'ai' ? 'active' : ''}`} onClick={() => setActiveTab('ai')}>
-                        <FontAwesomeIcon icon={faRobot}/> KI-Konfiguration
+                        <FontAwesomeIcon icon={faRobot}/> AI configuration
                     </button>
                     <button className={`sidebar-item ${activeTab === 'media' ? 'active' : ''}`} onClick={() => setActiveTab('media')}>
-                        <FontAwesomeIcon icon={faImage}/> Medien
+                        <FontAwesomeIcon icon={faImage}/> Media
                     </button>
                     <button className={`sidebar-item ${activeTab === 'branding' ? 'active' : ''}`} onClick={() => setActiveTab('branding')}>
                         <FontAwesomeIcon icon={faPalette}/> Branding
                     </button>
                     <button className={`sidebar-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
-                        <FontAwesomeIcon icon={faUsers}/> Benutzerverwaltung
+                        <FontAwesomeIcon icon={faUsers}/> User management
                     </button>
                 </div>
 
                 <div className="admin-panel">
                     {activeTab === 'ai' && (
                         <motion.div className="settings-section" initial={{opacity: 0}} animate={{opacity: 1}}>
-                            <h2><FontAwesomeIcon icon={faRobot}/> KI-Konfiguration</h2>
-                            <p className="section-description">Konfiguriere den KI-Anbieter für die automatische Quiz-Generierung.</p>
+                            <h2><FontAwesomeIcon icon={faRobot}/> AI configuration</h2>
+                            <p className="section-description">Configure the AI provider for automatic quiz generation.</p>
 
                             <div className="settings-form">
                                 <div className="form-group">
-                                    <label>Anbieter</label>
-                                    <SelectBox value={aiProvider} onChange={setAiProvider} options={AI_PROVIDERS} placeholder="Anbieter wählen..."/>
+                                    <label>Provider</label>
+                                    <SelectBox value={aiProvider} onChange={setAiProvider} options={AI_PROVIDERS} placeholder="Select provider..."/>
                                 </div>
 
                                 {aiProvider && (
                                     <>
                                         {aiProvider !== 'ollama' && (
                                             <div className="form-group">
-                                                <label>API-Schlüssel</label>
+                                                <label>API key</label>
                                                 <Input placeholder="sk-..." value={aiApiKey} onChange={(e) => setAiApiKey(e.target.value)}/>
                                             </div>
                                         )}
                                         <div className="form-group">
-                                            <label>Modell</label>
+                                            <label>Model</label>
                                             <SelectBox
                                                 value={aiModel}
                                                 onChange={setAiModel}
                                                 options={aiModels}
-                                                placeholder={modelsLoading ? 'Modelle werden geladen...' : 'Modell wählen...'}
+                                                placeholder={modelsLoading ? 'Loading models...' : 'Select model...'}
                                                 disabled={modelsLoading}
                                             />
                                         </div>
                                         {aiProvider === 'ollama' && (
                                             <div className="form-group">
-                                                <label>Basis-URL</label>
+                                                <label>Base URL</label>
                                                 <Input placeholder="http://localhost:11434" value={aiBaseUrl} onChange={(e) => setAiBaseUrl(e.target.value)}/>
                                             </div>
                                         )}
                                     </>
                                 )}
 
-                                <Button text="Speichern" type="green compact" onClick={saveAiSettings}/>
+                                <Button text="Save" type="green compact" onClick={saveAiSettings}/>
                             </div>
                         </motion.div>
                     )}
 
                     {activeTab === 'media' && (
                         <motion.div className="settings-section" initial={{opacity: 0}} animate={{opacity: 1}}>
-                            <h2><FontAwesomeIcon icon={faImage}/> Medien</h2>
-                            <p className="section-description">Konfiguriere API-Schlüssel für die Bildersuche im Quiz-Editor. Beide Dienste sind kostenlos.</p>
+                            <h2><FontAwesomeIcon icon={faImage}/> Media</h2>
+                            <p className="section-description">Configure API keys for image search in the quiz editor. Both services are free.</p>
 
                             <div className="settings-form">
                                 <div className="form-group">
                                     <label>Unsplash Access Key</label>
-                                    <span className="form-hint">Erstelle eine App auf <a href="https://unsplash.com/oauth/applications/new" target="_blank" rel="noopener noreferrer">unsplash.com/developers</a> und kopiere den "Access Key".</span>
-                                    <Input placeholder="z.B. ab12cd34ef56gh78ij90..." value={unsplashAccessKey} onChange={(e) => setUnsplashAccessKey(e.target.value)}/>
+                                    <span className="form-hint">Create an app at <a href="https://unsplash.com/oauth/applications/new" target="_blank" rel="noopener noreferrer">unsplash.com/developers</a> and copy the "Access Key".</span>
+                                    <Input placeholder="e.g. ab12cd34ef56gh78ij90..." value={unsplashAccessKey} onChange={(e) => setUnsplashAccessKey(e.target.value)}/>
                                 </div>
                                 <div className="form-group">
                                     <label>Giphy API Key</label>
-                                    <span className="form-hint">Erstelle eine App auf <a href="https://developers.giphy.com/dashboard/?create=true" target="_blank" rel="noopener noreferrer">developers.giphy.com</a> und kopiere den "API Key".</span>
-                                    <Input placeholder="z.B. aBcDeFgHiJkLmNoPqRsT..." value={giphyApiKey} onChange={(e) => setGiphyApiKey(e.target.value)}/>
+                                    <span className="form-hint">Create an app at <a href="https://developers.giphy.com/dashboard/?create=true" target="_blank" rel="noopener noreferrer">developers.giphy.com</a> and copy the "API Key".</span>
+                                    <Input placeholder="e.g. aBcDeFgHiJkLmNoPqRsT..." value={giphyApiKey} onChange={(e) => setGiphyApiKey(e.target.value)}/>
                                 </div>
 
-                                <Button text="Speichern" type="green compact" onClick={saveMediaSettings}/>
+                                <Button text="Save" type="green compact" onClick={saveMediaSettings}/>
                             </div>
                         </motion.div>
                     )}
@@ -364,7 +364,7 @@ export const Admin = () => {
                     {activeTab === 'branding' && (
                         <motion.div className="settings-section" initial={{opacity: 0}} animate={{opacity: 1}}>
                             <h2><FontAwesomeIcon icon={faPalette}/> Branding</h2>
-                            <p className="section-description">Passe das Erscheinungsbild deiner Quizzle-Instanz an.</p>
+                            <p className="section-description">Customize the appearance of your Quizzle instance.</p>
 
                             <div className="settings-form">
                                 <div className="form-group">
@@ -373,11 +373,11 @@ export const Admin = () => {
                                         <img src={logoPreview || logoImg} alt="Logo" className="image-preview logo-preview"/>
                                         <div className="image-upload-actions">
                                             <label className="upload-btn">
-                                                <FontAwesomeIcon icon={faUpload}/> Bild wählen
+                                                <FontAwesomeIcon icon={faUpload}/> Choose image
                                                 <input type="file" accept="image/*" hidden onChange={(e) => handleImageSelect('logo', e)}/>
                                             </label>
-                                            {logoPreview && <Button text="Hochladen" type="green compact" onClick={() => uploadImage('logo')}/>}
-                                            {!logoPreview && <button className="reset-btn" onClick={() => resetImage('logo')}><FontAwesomeIcon icon={faRotateLeft}/> Zurücksetzen</button>}
+                                            {logoPreview && <Button text="Upload" type="green compact" onClick={() => uploadImage('logo')}/>}
+                                            {!logoPreview && <button className="reset-btn" onClick={() => resetImage('logo')}><FontAwesomeIcon icon={faRotateLeft}/> Reset</button>}
                                         </div>
                                     </div>
                                 </div>
@@ -387,11 +387,11 @@ export const Admin = () => {
                                         <img src={titlePreview || titleImg} alt="Banner" className="image-preview title-preview"/>
                                         <div className="image-upload-actions">
                                             <label className="upload-btn">
-                                                <FontAwesomeIcon icon={faUpload}/> Bild wählen
+                                                <FontAwesomeIcon icon={faUpload}/> Choose image
                                                 <input type="file" accept="image/*" hidden onChange={(e) => handleImageSelect('title', e)}/>
                                             </label>
-                                            {titlePreview && <Button text="Hochladen" type="green compact" onClick={() => uploadImage('title')}/>}
-                                            {!titlePreview && <button className="reset-btn" onClick={() => resetImage('title')}><FontAwesomeIcon icon={faRotateLeft}/> Zurücksetzen</button>}
+                                            {titlePreview && <Button text="Upload" type="green compact" onClick={() => uploadImage('title')}/>}
+                                            {!titlePreview && <button className="reset-btn" onClick={() => resetImage('title')}><FontAwesomeIcon icon={faRotateLeft}/> Reset</button>}
                                         </div>
                                     </div>
                                 </div>
@@ -400,22 +400,22 @@ export const Admin = () => {
                                     <Input placeholder="Quizzle" value={brandName} onChange={(e) => setBrandName(e.target.value)}/>
                                 </div>
                                 <div className="form-group">
-                                    <label>Primärfarbe</label>
+                                    <label>Primary color</label>
                                     <div className="color-input-row">
                                         <input type="color" value={brandColor || '#6547EE'} onChange={(e) => setBrandColor(e.target.value)} className="color-picker"/>
                                         <Input placeholder="#6547EE" value={brandColor} onChange={(e) => setBrandColor(e.target.value)}/>
                                     </div>
                                 </div>
                                 <div className="form-group">
-                                    <label>Impressum-URL</label>
+                                    <label>Imprint URL</label>
                                     <Input placeholder="https://..." value={brandImprint} onChange={(e) => setBrandImprint(e.target.value)}/>
                                 </div>
                                 <div className="form-group">
-                                    <label>Datenschutz-URL</label>
+                                    <label>Privacy policy URL</label>
                                     <Input placeholder="https://..." value={brandPrivacy} onChange={(e) => setBrandPrivacy(e.target.value)}/>
                                 </div>
 
-                                <Button text="Speichern" type="green compact" onClick={saveBrandingSettings}/>
+                                <Button text="Save" type="green compact" onClick={saveBrandingSettings}/>
                             </div>
                         </motion.div>
                     )}
@@ -424,10 +424,10 @@ export const Admin = () => {
                         <motion.div className="settings-section" initial={{opacity: 0}} animate={{opacity: 1}}>
                             <div className="section-header-row">
                                 <div>
-                                    <h2><FontAwesomeIcon icon={faUsers}/> Benutzerverwaltung</h2>
-                                    <p className="section-description">Verwalte Benutzerkonten und Berechtigungen.</p>
+                                    <h2><FontAwesomeIcon icon={faUsers}/> User management</h2>
+                                    <p className="section-description">Manage user accounts and permissions.</p>
                                 </div>
-                                <Button text="Neuer Benutzer" icon={faPlus} type="primary compact" onClick={() => setShowNewUserDialog(true)}/>
+                                <Button text="New user" icon={faPlus} type="primary compact" onClick={() => setShowNewUserDialog(true)}/>
                             </div>
 
                             <div className="user-list">
@@ -437,24 +437,24 @@ export const Admin = () => {
                                             <FontAwesomeIcon icon={u.role === 'admin' ? faShieldAlt : faChalkboardTeacher} className={`role-icon ${u.role}`}/>
                                             <div>
                                                 <span className="user-name">{u.username}</span>
-                                                <span className="user-role">{u.role === 'admin' ? 'Administrator' : 'Lehrkraft'}</span>
+                                                <span className="user-role">{u.role === 'admin' ? 'Administrator' : 'Teacher'}</span>
                                             </div>
                                         </div>
                                         <div className="user-actions">
                                             {u.id !== user?.id && (
                                                 <>
-                                                    <button className="icon-btn" title="Rolle wechseln" onClick={() => toggleRole(u.id, u.role)}>
+                                                    <button className="icon-btn" title="Toggle role" onClick={() => toggleRole(u.id, u.role)}>
                                                         <FontAwesomeIcon icon={u.role === 'admin' ? faChalkboardTeacher : faShieldAlt}/>
                                                     </button>
-                                                    <button className="icon-btn" title="Passwort zurücksetzen" onClick={() => {setPasswordResetUserId(u.id); setShowPasswordDialog(true);}}>
+                                                    <button className="icon-btn" title="Reset password" onClick={() => {setPasswordResetUserId(u.id); setShowPasswordDialog(true);}}>
                                                         <FontAwesomeIcon icon={faKey}/>
                                                     </button>
-                                                    <button className="icon-btn danger" title="Löschen" onClick={() => deleteUserHandler(u.id, u.username)}>
+                                                    <button className="icon-btn danger" title="Delete" onClick={() => deleteUserHandler(u.id, u.username)}>
                                                         <FontAwesomeIcon icon={faTrash}/>
                                                     </button>
                                                 </>
                                             )}
-                                            {u.id === user?.id && <span className="you-badge">Du</span>}
+                                            {u.id === user?.id && <span className="you-badge">You</span>}
                                         </div>
                                     </div>
                                 ))}
@@ -468,18 +468,18 @@ export const Admin = () => {
                 isOpen={showNewUserDialog}
                 onClose={() => {setShowNewUserDialog(false); setNewUserError('');}}
                 onConfirm={createUser}
-                title="Neuen Benutzer erstellen"
-                confirmText="Erstellen"
-                cancelText="Abbrechen"
+                title="Create new user"
+                confirmText="Create"
+                cancelText="Cancel"
             >
                 <div className="new-user-form">
-                    <Input placeholder="Benutzername" value={newUsername} onChange={(e) => {setNewUsername(e.target.value); setNewUserError('');}}/>
-                    <Input type="password" placeholder="Passwort" value={newPassword} onChange={(e) => {setNewPassword(e.target.value); setNewUserError('');}}/>
+                    <Input placeholder="Username" value={newUsername} onChange={(e) => {setNewUsername(e.target.value); setNewUserError('');}}/>
+                    <Input type="password" placeholder="Password" value={newPassword} onChange={(e) => {setNewPassword(e.target.value); setNewUserError('');}}/>
                     <SelectBox
                         value={newRole}
                         onChange={setNewRole}
                         options={[
-                            {value: 'teacher', label: 'Lehrkraft', icon: faChalkboardTeacher},
+                            {value: 'teacher', label: 'Teacher', icon: faChalkboardTeacher},
                             {value: 'admin', label: 'Administrator', icon: faShieldAlt}
                         ]}
                     />
@@ -491,12 +491,12 @@ export const Admin = () => {
                 isOpen={showPasswordDialog}
                 onClose={() => {setShowPasswordDialog(false); setNewPasswordValue('');}}
                 onConfirm={resetPassword}
-                title="Passwort zurücksetzen"
-                confirmText="Zurücksetzen"
-                cancelText="Abbrechen"
+                title="Reset password"
+                confirmText="Reset"
+                cancelText="Cancel"
             >
                 <div className="new-user-form">
-                    <Input type="password" placeholder="Neues Passwort (min. 6 Zeichen)" value={newPasswordValue} onChange={(e) => setNewPasswordValue(e.target.value)}/>
+                    <Input type="password" placeholder="New password (min. 6 characters)" value={newPasswordValue} onChange={(e) => setNewPasswordValue(e.target.value)}/>
                 </div>
             </Dialog>
         </div>

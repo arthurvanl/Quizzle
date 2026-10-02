@@ -117,7 +117,7 @@ export const Answer = ({color, answer, onChange, index, removeAnswer, questionUu
     return (
         <div className={`quiz-answer quiz-answer-${color}`} style={{ opacity: isLoading ? 0.7 : 1 }}>
             {hasImage && !isLoading && <img src={imageDataUrl} alt="answer" onClick={deleteImage}/>}
-            {!hasImage && !isLoading && <input type="text" placeholder={`Antwort ${index + 1}`} value={answerContent}
+            {!hasImage && !isLoading && <input type="text" placeholder={`Answer ${index + 1}`} value={answerContent}
                    onChange={(e) => updateAnswerContent(e.target.value)}/>}
             <div className="answer-actions">
                 {answerContent === "" && !hasImage && !isLoading && <FontAwesomeIcon icon={faImage} onClick={openMediaDialog} className="img-icon"/>}

@@ -53,7 +53,7 @@ export const InGameClient = () => {
             setIsPracticeMode(true);
 
             if (!practiceUserData || !practiceUserData.name) {
-                toast.error('Bitte wähle zuerst einen Namen und Charakter.');
+                toast.error('Please choose a name and character first.');
                 navigate(`/?code=${practiceCode}`);
                 return;
             }
@@ -153,7 +153,7 @@ export const InGameClient = () => {
 
         const hostDisconnected = () => {
             clearCurrentSession();
-            toast.error("Der Host hat das Spiel verlassen.", {
+            toast.error("The host left the game.", {
                 duration: 3000
             });
             setTimeout(() => navigate("/"), 1000);
@@ -161,7 +161,7 @@ export const InGameClient = () => {
 
         const kickedFromRoom = () => {
             clearCurrentSession();
-            toast.error("Du wurdest aus dem Raum entfernt.", {
+            toast.error("You were removed from the room.", {
                 duration: 3000
             });
             setTimeout(() => navigate("/"), 1000);
@@ -182,7 +182,7 @@ export const InGameClient = () => {
         const handleReconnection = (success, error, gameState) => {
             if (success) {
                 setIsReconnecting(false);
-                toast.success("Erfolgreich wieder verbunden!", { duration: 3000 });
+                toast.success("Reconnected successfully!", { duration: 3000 });
                 
                 if (gameState) {
                     if (gameState.playerPoints !== undefined) {
@@ -200,17 +200,17 @@ export const InGameClient = () => {
                     
                     clearCurrentSession();
                     
-                    let message = "Sitzung abgelaufen. Zurück zur Startseite...";
+                    let message = "Session expired. Returning to the home page...";
                     if (error === 'Kicked from room') {
-                        message = "Du wurdest aus dem Raum entfernt. Zurück zur Startseite...";
+                        message = "You were removed from the room. Returning to the home page...";
                     } else if (error === 'Host disconnected') {
-                        message = "Der Host hat das Spiel verlassen. Zurück zur Startseite...";
+                        message = "The host left the game. Returning to the home page...";
                     }
                     
                     toast.error(message, { duration: 2000 });
                     setTimeout(() => navigate("/"), 500);
                 } else {
-                    toast.error("Verbindung unterbrochen. Versuche wieder zu verbinden...", { duration: 2000 });
+                    toast.error("Connection lost. Trying to reconnect...", { duration: 2000 });
                 }
             }
         };
@@ -268,11 +268,11 @@ export const InGameClient = () => {
         } catch (error) {
             console.error('Error loading practice quiz:', error);
             if (error.message && error.message.includes('410')) {
-                toast.error('Dieses Übungsquiz ist abgelaufen.');
+                toast.error('This practice quiz has expired.');
             } else if (error.message && error.message.includes('404')) {
-                toast.error('Übungsquiz nicht gefunden.');
+                toast.error('Practice quiz not found.');
             } else {
-                toast.error('Fehler beim Laden des Übungsquiz.');
+                toast.error('Failed to load the practice quiz.');
             }
             navigate('/');
         }
@@ -315,7 +315,7 @@ export const InGameClient = () => {
             }
         } catch (error) {
             console.error('Error submitting practice answer:', error);
-            toast.error('Fehler beim Senden der Antwort.');
+            toast.error('Failed to submit answer.');
         }
     };
 
@@ -517,13 +517,13 @@ export const InGameClient = () => {
         }
 
         if (!answersReady) {
-            toast.error("Antworten sind noch nicht bereit!");
+            toast.error("Answers are not ready yet!");
             return;
         }
 
         socket.emit("SUBMIT_ANSWER", {answers}, (response) => {
             if (!response.success) {
-                toast.error(response.error || "Fehler beim Senden der Antwort");
+                toast.error(response.error || "Failed to submit answer");
                 return;
             }
             setCurrentQuestion(null);
@@ -639,7 +639,7 @@ export const InGameClient = () => {
                         icon={isConnected ? faWifi : faExclamationTriangle} 
                         className={`connection-icon ${isReconnecting ? 'reconnecting' : 'disconnected'}`}
                     />
-                    <span>{isReconnecting ? 'Verbinde wieder...' : 'Verbindung verloren'}</span>
+                    <span>{isReconnecting ? 'Reconnecting...' : 'Connection lost'}</span>
                 </div>
             )}
             
@@ -651,7 +651,7 @@ export const InGameClient = () => {
                                 <div className="progress-bar">
                                     <div className="progress-fill" style={{width: `${((currentQuestionIndex + 1) / practiceQuiz.questions.length) * 100}%`}}></div>
                                 </div>
-                                <span>Frage {currentQuestionIndex + 1} von {practiceQuiz.questions.length}</span>
+                                <span>Question {currentQuestionIndex + 1} of {practiceQuiz.questions.length}</span>
                             </div>
                         )}
                         <h2>{getCurrentQuestion().title}</h2>
@@ -691,7 +691,7 @@ export const InGameClient = () => {
                         practiceQuestionResult?.isLastQuestion ? (
                             <>
                                 <FontAwesomeIcon icon={faCheck} className="ingame-icon-correct"/>
-                                <h2>Quiz abgeschlossen! 🎉</h2>
+                                <h2>Quiz complete! 🎉</h2>
                                 <div className="practice-final-score">
                                     <span className="score">{practiceQuestionResult.finalResults.score}</span>
                                     <span className="total">/ {practiceQuestionResult.finalResults.total}</span>
@@ -700,7 +700,7 @@ export const InGameClient = () => {
                                     </div>
                                 </div>
                                 <button className="practice-next-button" onClick={() => navigate('/')}>
-                                    Zurück zur Startseite
+                                    Back to home
                                 </button>
                             </>
                         ) : (
@@ -716,8 +716,8 @@ export const InGameClient = () => {
                                     }
                                 />
                                 <h2>
-                                    {practiceQuestionResult?.result === 'correct' ? "Richtig!" :
-                                     practiceQuestionResult?.result === 'partial' ? "Teilweise richtig!" : "Weiter so!"}
+                                    {practiceQuestionResult?.result === 'correct' ? "Correct!" :
+                                     practiceQuestionResult?.result === 'partial' ? "Partially correct!" : "Keep it up!"}
                                 </h2>
                                 <ClientAnswerReview
                                     questionType={getPracticeQuestion()?.type}
@@ -726,7 +726,7 @@ export const InGameClient = () => {
                                     practiceQuestion={getPracticeQuestion()}
                                 />
                                 <button className="practice-next-button" onClick={nextPracticeQuestion}>
-                                    Nächste Frage
+                                    Next question
                                 </button>
                             </>
                         )
@@ -735,7 +735,7 @@ export const InGameClient = () => {
                             const status = getCorrectStatus(selection, answers);
                             const statusClass = status === 1 ? 'result-correct' : status === 0 ? 'result-partial' : 'result-wrong';
                             const statusIcon = status === 1 ? faCheck : status === 0 ? faMinus : faX;
-                            const statusTitle = status === 1 ? 'Richtig!' : status === 0 ? 'Fast richtig!' : 'Nicht ganz!';
+                            const statusTitle = status === 1 ? 'Correct!' : status === 0 ? 'Almost!' : 'Not quite!';
                             const pointsColorClass = status === 1 ? 'points-correct' : status === 0 ? 'points-partial' : 'points-wrong';
                             return (
                                 <div className="result-reveal">
@@ -763,7 +763,7 @@ export const InGameClient = () => {
                                             <div className="streak-card-header">
                                                 <div className="streak-card-title">
                                                     <span className="streak-number">{streak}</span>
-                                                    <span className="streak-label">Richtige in Folge</span>
+                                                    <span className="streak-label">Correct in a row</span>
                                                 </div>
                                                 <div className="streak-badge">
                                                     <FontAwesomeIcon icon={faFire}/>
@@ -782,12 +782,12 @@ export const InGameClient = () => {
                                         <div className="result-card rank-card">
                                             <div className="rank-badge">{rank}.</div>
                                             <div className="rank-info">
-                                                <span className="rank-main">Platz {rank} von {totalPlayers}</span>
+                                                <span className="rank-main">Place {rank} of {totalPlayers}</span>
                                                 <span className="rank-sub">
                                                     {playerAhead && playerAhead.gap >= 0
-                                                        ? `${playerAhead.gap} Punkte bis zum nächsten Platz`
+                                                        ? `${playerAhead.gap} points to next place`
                                                         : rank === 1
-                                                            ? 'Du führst!'
+                                                            ? "You're in the lead!"
                                                             : ''}
                                                 </span>
                                             </div>

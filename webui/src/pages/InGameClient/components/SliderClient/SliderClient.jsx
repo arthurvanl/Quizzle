@@ -95,7 +95,7 @@ export const SliderClient = ({question, onSubmit}) => {
                 className={`submit-slider-answer ${!submitted ? 'submit-shown' : ''}`}
             >
                 <FontAwesomeIcon icon={faPaperPlane} />
-                <span>Antwort senden</span>
+                <span>Submit answer</span>
             </button>
         </div>
     );

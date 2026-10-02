@@ -28,11 +28,11 @@ export const QuizLoader = () => {
                 const isLoaded = loadQuizByContent(e.target.result);
                 if (!isLoaded) throw new Error("Invalid file format.");
 
-                toast.success("Quiz erfolgreich geladen!");
+                toast.success("Quiz loaded successfully!");
                 setCirclePosition(["-18rem 0 0 45%", "-35rem 0 0 55%"]);
                 setTimeout(() => navigate("/host/lobby"), 500);
             } catch (e) {
-                toast.error("Ungültiges Dateiformat.");
+                toast.error("Invalid file format.");
             }
         }
         reader.readAsArrayBuffer(file);
@@ -52,11 +52,11 @@ export const QuizLoader = () => {
     const loadQuiz = async () => {
         const res = await loadQuizById(quizId);
         if (!res){
-            toast.error(`Quiz-ID nicht gefunden. Versichere dich, dass du die richtige ID eingegeben hast und das Quiz auf der Instanz von ${name} läuft.`);
+            toast.error(`Quiz ID not found. Make sure you entered the correct ID and that the quiz is running on ${name}'s instance.`);
             return;
         }
 
-        toast.success("Quiz erfolgreich geladen!");
+        toast.success("Quiz loaded successfully!");
         setCirclePosition(["-18rem 0 0 45%", "-35rem 0 0 55%"]);
         setTimeout(() => navigate("/host/lobby"), 500);
     }
@@ -68,7 +68,7 @@ export const QuizLoader = () => {
             const file = e.dataTransfer.files[0];
             runImport(file);
         } catch (e) {
-            toast.error("Ungültiges Dateiformat.");
+            toast.error("Invalid file format.");
         }
     }
 
@@ -86,24 +86,24 @@ export const QuizLoader = () => {
             {dragActive && <div className="drag-overlay">
                 <div className="drag-container">
                     <FontAwesomeIcon icon={faFileImport} size="3x"/>
-                    <h2>Datei hier ablegen</h2>
+                    <h2>Drop file here</h2>
                 </div>
             </div>}
             <div className="quiz-loader">
                 <Link to="/"><img src={titleImg} alt="logo"/></Link>
 
                 <div className="code-input">
-                    <Input placeholder="Quiz-ID (z. B. JWTIOI)" value={quizId} onChange={(e) => setQuizId(e.target.value)}/>
+                    <Input placeholder="Quiz ID (e.g. JWTIOI)" value={quizId} onChange={(e) => setQuizId(e.target.value)}/>
                     <Button icon={faPlay} padding="0.8rem 1.5rem" onClick={loadQuiz} />
                 </div>
 
                 <div className="alternative">
                     <hr/>
-                    <h2>oder</h2>
+                    <h2>or</h2>
                     <hr/>
                 </div>
 
-                <Button icon={faFileUpload} text="Datei hochladen" padding="0.8rem 1.5rem"
+                <Button icon={faFileUpload} text="Upload file" padding="0.8rem 1.5rem"
                         onClick={importQuiz}/>
             </div>
 

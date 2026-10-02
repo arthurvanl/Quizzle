@@ -187,9 +187,9 @@ export const QuizCreator = () => {
                     settings: importedData.settings ? {...DEFAULT_QUIZ_SETTINGS, ...importedData.settings} : DEFAULT_QUIZ_SETTINGS
                 }));
                 titleValidation.setValue(importedData.title);
-                toast.success("Quiz erfolgreich importiert!");
+                toast.success("Quiz imported successfully!");
             } catch (error) {
-                toast.error(error.message || "Ungültiges Dateiformat.");
+                toast.error(error.message || "Invalid file format.");
             }
         });
     }
@@ -226,7 +226,7 @@ export const QuizCreator = () => {
 
     const handlePracticeUploadClick = () => {
         if (!titleValidation.validate()) {
-            toast.error("Quiz-Titel darf nicht leer sein.");
+            toast.error("Quiz title cannot be empty.");
             return;
         }
         if (!validateQuestions()) return;
@@ -239,19 +239,19 @@ export const QuizCreator = () => {
         try {
             const response = await putRequest("/practice", quizData);
             if (response.practiceCode) {
-                toast.success("Übungsquiz erfolgreich erstellt!");
-                toast.success(`Übungscode: ${response.practiceCode}`, {duration: 10000});
+                toast.success("Practice quiz created successfully!");
+                toast.success(`Practice code: ${response.practiceCode}`, {duration: 10000});
                 navigator.clipboard?.writeText(response.practiceCode);
             }
         } catch (error) {
             console.error('Practice quiz creation error:', error);
-            toast.error("Fehler beim Erstellen des Übungsquiz.");
+            toast.error("Failed to create practice quiz.");
         }
     };
 
     const uploadQuiz = async () => {
         if (!titleValidation.validate()) {
-            toast.error("Quiz-Titel darf nicht leer sein.");
+            toast.error("Quiz title cannot be empty.");
             return;
         }
         if (!validateQuestions()) return;
@@ -260,18 +260,18 @@ export const QuizCreator = () => {
         quizData.settings = quizSettings;
 
         putRequest("/quizzes", quizData).then((r) => {
-            if (r.quizId === undefined) throw {ce: "Dein Quiz übersteigt die Speicherkapazität des Servers. Bitte lade es lokal herunter."};
-            toast.success("Quiz erfolgreich hochgeladen.");
-            toast.success("Quiz-ID: " + r.quizId, {duration: 10000});
+            if (r.quizId === undefined) throw {ce: "Your quiz exceeds the server's storage capacity. Please download it locally."};
+            toast.success("Quiz uploaded successfully.");
+            toast.success("Quiz ID: " + r.quizId, {duration: 10000});
             navigator.clipboard?.writeText(r.quizId);
         }).catch((e) => {
-            toast.error(e?.ce ? e.ce : "Fehler beim Hochladen des Quiz.");
+            toast.error(e?.ce ? e.ce : "Failed to upload quiz.");
         });
     }
 
     const downloadQuiz = async () => {
         if (!titleValidation.validate()) {
-            toast.error("Quiz-Titel darf nicht leer sein.");
+            toast.error("Quiz title cannot be empty.");
             return;
         }
         if (!validateQuestions()) return;
@@ -361,7 +361,7 @@ export const QuizCreator = () => {
             }
         } catch (e) {
             if (!errorToastId) {
-                setErrorToastId(toast.error("Dein Quiz übersteigt die lokale Speicherkapazität. Bitte lade es hoch, um zu verhindern, dass es verloren geht wenn du die Seite verlässt.",
+                setErrorToastId(toast.error("Your quiz exceeds local storage capacity. Please upload it to avoid losing it when you leave the page.",
                     {
                         duration: Infinity,
                         icon: <FontAwesomeIcon color={"#FFA500"} icon={faExclamationTriangle} size="lg"/>
@@ -381,7 +381,7 @@ export const QuizCreator = () => {
 
                     <Input
                         className="quiz-title-input"
-                        placeholder="Quiz-Titel eingeben"
+                        placeholder="Enter quiz title"
                         value={titleValidation.value}
                         onChange={(e) => handleTitleChange(e.target.value)}
                         onBlur={titleValidation.onBlur}
@@ -394,14 +394,14 @@ export const QuizCreator = () => {
                             <div
                                 className={`action-button undo ${!canUndo ? 'disabled' : ''}`}
                                 onClick={canUndo ? undo : undefined}
-                                title="Rückgängig (Strg+Z)"
+                                title="Undo (Ctrl+Z)"
                             >
                                 <FontAwesomeIcon icon={faRotateLeft} />
                             </div>
                             <div
                                 className={`action-button redo ${!canRedo ? 'disabled' : ''}`}
                                 onClick={canRedo ? redo : undefined}
-                                title="Wiederholen (Strg+Shift+Z)"
+                                title="Redo (Ctrl+Shift+Z)"
                             >
                                 <FontAwesomeIcon icon={faRotateRight} />
                             </div>
@@ -419,7 +419,7 @@ export const QuizCreator = () => {
                         <div
                             className={`action-button settings ${showSettings ? 'active' : ''}`}
                             onClick={() => setShowSettings(s => !s)}
-                            title="Quiz-Einstellungen"
+                            title="Quiz settings"
                         >
                             <FontAwesomeIcon icon={faGear} />
                         </div>
@@ -428,14 +428,14 @@ export const QuizCreator = () => {
                             <div 
                                 className="action-button import" 
                                 onClick={importQuiz}
-                                title="Quiz aus Datei importieren"
+                                title="Import quiz from file"
                             >
                                 <FontAwesomeIcon icon={faFileImport} />
                             </div>
                             <div 
                                 className="action-button download" 
                                 onClick={downloadQuiz}
-                                title="Quiz als Datei herunterladen"
+                                title="Download quiz as file"
                             >
                                 <FontAwesomeIcon icon={faFileDownload} />
                             </div>
@@ -445,14 +445,14 @@ export const QuizCreator = () => {
                             <div 
                                 className={`action-button upload ${!isAuthenticated ? 'locked' : ''}`}
                                 onClick={handleUploadClick}
-                                title={!isAuthenticated ? "Anmeldung erforderlich" : "Als Live-Quiz hochladen"}
+                                title={!isAuthenticated ? "Login required" : "Upload as live quiz"}
                             >
                                 <FontAwesomeIcon icon={faCloudUpload} />
                             </div>
                             <div 
                                 className={`action-button practice ${!isAuthenticated ? 'locked' : ''}`}
                                 onClick={handlePracticeUploadClick}
-                                title={!isAuthenticated ? "Anmeldung erforderlich" : "Als Übungsquiz veröffentlichen"}
+                                title={!isAuthenticated ? "Login required" : "Publish as practice quiz"}
                             >
                                 <FontAwesomeIcon icon={faGraduationCap} />
                             </div>
@@ -463,7 +463,7 @@ export const QuizCreator = () => {
                             <div 
                                 className="action-button clear" 
                                 onClick={clearQuiz}
-                                title="Quiz zurücksetzen"
+                                title="Reset quiz"
                             >
                                 <FontAwesomeIcon icon={faEraser} />
                             </div>

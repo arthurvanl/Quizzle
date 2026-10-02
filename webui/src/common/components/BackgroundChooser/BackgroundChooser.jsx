@@ -16,7 +16,7 @@ export const BackgroundChooser = () => {
                 icon={faImage}
                 padding="0.5rem 0.8rem"
                 onClick={() => setOpen(o => !o)}
-                ariaLabel="Hintergrund ändern"
+                ariaLabel="Change background"
             />
 
             <AnimatePresence>
@@ -30,7 +30,7 @@ export const BackgroundChooser = () => {
                             exit={{opacity: 0, y: 20, scale: 0.95}}
                             transition={{duration: 0.2, ease: "easeOut"}}
                         >
-                            <h3>Hintergrund wählen</h3>
+                            <h3>Choose background</h3>
                             <div className="bg-chooser-grid">
                                 {HOST_BACKGROUNDS.map(bg => {
                                     const selected = bg.id === currentId;

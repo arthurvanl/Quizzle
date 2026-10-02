@@ -48,7 +48,7 @@ export const EndingHost = () => {
 
     const handleExportToExcel = () => {
         if (!analyticsData) {
-            toast.error('Keine Analytics-Daten zum Exportieren verfügbar');
+            toast.error('No analytics data available to export');
             return;
         }
 
@@ -56,15 +56,15 @@ export const EndingHost = () => {
             const timestamp = new Date().toISOString().slice(0, 19).replace(/[:-]/g, '');
             const quizName = `LiveQuiz_${timestamp}`;
             const filename = exportLiveQuizToExcel(analyticsData, quizName);
-            toast.success(`Analytics exportiert: ${filename}`);
+            toast.success(`Analytics exported: ${filename}`);
         } catch (error) {
             console.error('Error exporting to Excel:', error);
-            toast.error('Fehler beim Exportieren der Daten');
+            toast.error('Failed to export data');
         }
     };
 
     const viewTabs = [
-        {id: 'scoreboard', title: 'Ergebnisse', icon: faTrophy},
+        {id: 'scoreboard', title: 'Results', icon: faTrophy},
         {id: 'analytics', title: 'Analytics', icon: faChartBar}
     ];
 
@@ -75,7 +75,7 @@ export const EndingHost = () => {
                 <SoundControl />
             </div>
 
-            <div className="view-toggle" role="tablist" aria-label="Ansicht wechseln">
+            <div className="view-toggle" role="tablist" aria-label="Switch view">
                 {viewTabs.map(tab => (
                     <button
                         key={tab.id}
@@ -93,7 +93,7 @@ export const EndingHost = () => {
             {activeView === 'analytics' && analyticsData && (
                 <div className="export-button-container">
                     <Button
-                        text="Als Excel herunterladen"
+                        text="Download as Excel"
                         icon={faDownload}
                         onClick={handleExportToExcel}
                         type="compact green"
@@ -104,7 +104,7 @@ export const EndingHost = () => {
             {activeView === 'scoreboard' && (
                 <>
                     <div className="ending-home-button">
-                        <Button onClick={() => location.reload()} text="Startseite"
+                        <Button onClick={() => location.reload()} text="Home"
                                 padding="1rem 1.5rem" icon={faHouse}/>
                     </div>
                     {(() => {
@@ -145,8 +145,7 @@ export const EndingHost = () => {
 
             {activeView === 'analytics' && !analyticsData && (
                 <div className="no-analytics">
-                    <p>Keine Analytics-Daten verfügbar. Bitte stellen Sie sicher, dass das Quiz ordnungsgemäß beendet
-                        wurde.</p>
+                    <p>No analytics data available. Please make sure the quiz was ended properly.</p>
                 </div>
             )}
         </div>

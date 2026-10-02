@@ -22,19 +22,19 @@ export const SetupWizard = ({onComplete}) => {
 
     const validateUsername = () => {
         if (!username.trim()) {
-            setUsernameError('Benutzername ist erforderlich');
+            setUsernameError('Username is required');
             return false;
         }
         if (username.length < 3) {
-            setUsernameError('Mindestens 3 Zeichen');
+            setUsernameError('At least 3 characters');
             return false;
         }
         if (username.length > 32) {
-            setUsernameError('Maximal 32 Zeichen');
+            setUsernameError('At most 32 characters');
             return false;
         }
         if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
-            setUsernameError('Nur Buchstaben, Zahlen, Punkte, Bindestriche und Unterstriche');
+            setUsernameError('Only letters, numbers, dots, hyphens and underscores');
             return false;
         }
         setUsernameError('');
@@ -43,17 +43,17 @@ export const SetupWizard = ({onComplete}) => {
 
     const validatePassword = () => {
         if (!password) {
-            setPasswordError('Passwort ist erforderlich');
+            setPasswordError('Password is required');
             return false;
         }
         if (password.length < 6) {
-            setPasswordError('Mindestens 6 Zeichen');
+            setPasswordError('At least 6 characters');
             return false;
         }
         setPasswordError('');
 
         if (confirmPassword && password !== confirmPassword) {
-            setConfirmError('Passwörter stimmen nicht überein');
+            setConfirmError('Passwords do not match');
             return false;
         }
         setConfirmError('');
@@ -62,11 +62,11 @@ export const SetupWizard = ({onComplete}) => {
 
     const validateConfirm = () => {
         if (!confirmPassword) {
-            setConfirmError('Bitte Passwort bestätigen');
+            setConfirmError('Please confirm your password');
             return false;
         }
         if (password !== confirmPassword) {
-            setConfirmError('Passwörter stimmen nicht überein');
+            setConfirmError('Passwords do not match');
             return false;
         }
         setConfirmError('');
@@ -88,10 +88,10 @@ export const SetupWizard = ({onComplete}) => {
         setLoading(true);
         try {
             await postRequest('/auth/setup', {username: username.trim(), password});
-            toast.success('Setup abgeschlossen! Willkommen bei Quizzle.');
+            toast.success('Setup complete! Welcome to Quizzle.');
             onComplete();
         } catch (error) {
-            toast.error(error.message || 'Setup fehlgeschlagen');
+            toast.error(error.message || 'Setup failed');
         } finally {
             setLoading(false);
         }
@@ -102,12 +102,12 @@ export const SetupWizard = ({onComplete}) => {
             <div className="setup-icon-container">
                 <FontAwesomeIcon icon={faWandMagicSparkles} className="setup-icon"/>
             </div>
-            <h2>Willkommen bei Quizzle!</h2>
+            <h2>Welcome to Quizzle!</h2>
             <p className="setup-description">
-                Richte dein Quizzle in wenigen Schritten ein. Erstelle zunächst einen <strong>Administrator-Account</strong>, um alle Einstellungen zu verwalten.
+                Set up your Quizzle in a few steps. First, create an <strong>administrator account</strong> to manage all settings.
             </p>
             <div className="setup-actions">
-                <Button text="Einrichtung starten" icon={faArrowRight} type="primary compact" onClick={nextStep}/>
+                <Button text="Start setup" icon={faArrowRight} type="primary compact" onClick={nextStep}/>
             </div>
         </motion.div>,
 
@@ -115,11 +115,11 @@ export const SetupWizard = ({onComplete}) => {
             <div className="setup-icon-container">
                 <FontAwesomeIcon icon={faUser} className="setup-icon"/>
             </div>
-            <h2>Benutzername wählen</h2>
-            <p className="setup-description">Wähle einen Benutzernamen für den Administrator-Account.</p>
+            <h2>Choose a username</h2>
+            <p className="setup-description">Choose a username for the administrator account.</p>
             <div className="setup-input-area">
                 <Input
-                    placeholder="Benutzername"
+                    placeholder="Username"
                     value={username}
                     onChange={(e) => {setUsername(e.target.value); setUsernameError('');}}
                     error={usernameError}
@@ -127,8 +127,8 @@ export const SetupWizard = ({onComplete}) => {
                 />
             </div>
             <div className="setup-actions">
-                <Button text="Zurück" icon={faArrowLeft} type="secondary compact" onClick={prevStep}/>
-                <Button text="Weiter" icon={faArrowRight} type="primary compact" onClick={nextStep}/>
+                <Button text="Back" icon={faArrowLeft} type="secondary compact" onClick={prevStep}/>
+                <Button text="Next" icon={faArrowRight} type="primary compact" onClick={nextStep}/>
             </div>
         </motion.div>,
 
@@ -136,12 +136,12 @@ export const SetupWizard = ({onComplete}) => {
             <div className="setup-icon-container">
                 <FontAwesomeIcon icon={faLock} className="setup-icon"/>
             </div>
-            <h2>Passwort festlegen</h2>
-            <p className="setup-description">Wähle ein sicheres Passwort für <strong>{username}</strong>.</p>
+            <h2>Set a password</h2>
+            <p className="setup-description">Choose a secure password for <strong>{username}</strong>.</p>
             <div className="setup-input-area">
                 <Input
                     type="password"
-                    placeholder="Passwort"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => {setPassword(e.target.value); setPasswordError('');}}
                     error={passwordError}
@@ -149,7 +149,7 @@ export const SetupWizard = ({onComplete}) => {
                 />
                 <Input
                     type="password"
-                    placeholder="Passwort bestätigen"
+                    placeholder="Confirm password"
                     value={confirmPassword}
                     onChange={(e) => {setConfirmPassword(e.target.value); setConfirmError('');}}
                     error={confirmError}
@@ -157,8 +157,8 @@ export const SetupWizard = ({onComplete}) => {
                 />
             </div>
             <div className="setup-actions">
-                <Button text="Zurück" icon={faArrowLeft} type="secondary compact" onClick={prevStep}/>
-                <Button text="Abschließen" icon={faCheck} type="green compact" onClick={handleSetup} disabled={loading}/>
+                <Button text="Back" icon={faArrowLeft} type="secondary compact" onClick={prevStep}/>
+                <Button text="Finish" icon={faCheck} type="green compact" onClick={handleSetup} disabled={loading}/>
             </div>
         </motion.div>
     ];

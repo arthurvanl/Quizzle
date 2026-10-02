@@ -5,7 +5,7 @@ const {getConfig} = require('../utils/file');
 const mediaLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 30,
-    message: {message: 'Zu viele Anfragen. Bitte warte einen Moment.'}
+    message: {message: 'Too many requests. Please wait a moment.'}
 });
 
 app.use(mediaLimiter);
@@ -23,7 +23,7 @@ app.get('/images', async (req, res) => {
 
     const config = getConfig();
     const accessKey = config?.media?.unsplashAccessKey;
-    if (!accessKey) return res.status(501).json({message: 'Unsplash API-Schlüssel nicht konfiguriert.'});
+    if (!accessKey) return res.status(501).json({message: 'Unsplash API key not configured.'});
 
     try {
         const url = query
@@ -36,7 +36,7 @@ app.get('/images', async (req, res) => {
         if (!response.ok) {
             const error = await response.text();
             console.error('Unsplash API error:', error);
-            return res.status(response.status).json({message: 'Fehler bei der Bildersuche.'});
+            return res.status(response.status).json({message: 'Error searching for images.'});
         }
 
         const data = await response.json();
@@ -53,7 +53,7 @@ app.get('/images', async (req, res) => {
         res.json({results, totalPages: query ? data.total_pages : undefined, total: query ? data.total : undefined});
     } catch (error) {
         console.error('Unsplash proxy error:', error);
-        res.status(500).json({message: 'Fehler bei der Bildersuche.'});
+        res.status(500).json({message: 'Error searching for images.'});
     }
 });
 
@@ -62,7 +62,7 @@ app.get('/gifs', async (req, res) => {
 
     const config = getConfig();
     const apiKey = config?.media?.giphyApiKey;
-    if (!apiKey) return res.status(501).json({message: 'Giphy API-Schlüssel nicht konfiguriert.'});
+    if (!apiKey) return res.status(501).json({message: 'Giphy API key not configured.'});
 
     try {
         const endpoint = query
@@ -74,7 +74,7 @@ app.get('/gifs', async (req, res) => {
         if (!response.ok) {
             const error = await response.text();
             console.error('Giphy API error:', error);
-            return res.status(response.status).json({message: 'Fehler bei der GIF-Suche.'});
+            return res.status(response.status).json({message: 'Error searching for GIFs.'});
         }
 
         const data = await response.json();
@@ -90,7 +90,7 @@ app.get('/gifs', async (req, res) => {
         res.json({results, total: data.pagination.total_count});
     } catch (error) {
         console.error('Giphy proxy error:', error);
-        res.status(500).json({message: 'Fehler bei der GIF-Suche.'});
+        res.status(500).json({message: 'Error searching for GIFs.'});
     }
 });
 

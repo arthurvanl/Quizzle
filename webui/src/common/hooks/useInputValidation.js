@@ -17,7 +17,7 @@ export const useInputValidation = (initialValue = '', validationRules = {}) => {
         } = validationRules;
 
         if (required && (!inputValue || inputValue.trim().length === 0)) {
-            return 'Dieses Feld ist erforderlich';
+            return 'This field is required';
         }
 
         if (!inputValue || inputValue.trim().length === 0) {
@@ -26,17 +26,17 @@ export const useInputValidation = (initialValue = '', validationRules = {}) => {
 
         const trimmedValue = inputValue.trim();
         if (trimmedValue.length < minLength) {
-            return `Mindestens ${minLength} Zeichen erforderlich`;
+            return `At least ${minLength} characters required`;
         }
         if (trimmedValue.length > maxLength) {
-            return `Maximal ${maxLength} Zeichen erlaubt`;
+            return `At most ${maxLength} characters allowed`;
         }
         if (pattern && !pattern.test(inputValue)) {
-            return 'Ungültiges Format';
+            return 'Invalid format';
         }
 
         if (allowedChars && !allowedChars.test(inputValue)) {
-            return 'Enthält ungültige Zeichen';
+            return 'Contains invalid characters';
         }
 
         if (customValidator) {
@@ -57,7 +57,7 @@ export const useInputValidation = (initialValue = '', validationRules = {}) => {
             if (!errorMessage && validationRules.maxLength) {
                 const progress = newValue.length / validationRules.maxLength;
                 if (progress > 0.8 && progress < 1) {
-                    setWarning(`${validationRules.maxLength - newValue.length} Zeichen übrig`);
+                    setWarning(`${validationRules.maxLength - newValue.length} characters left`);
                 } else {
                     setWarning('');
                 }
@@ -107,10 +107,10 @@ export const validationRules = {
         customValidator: (value) => {
             const trimmed = value.trim();
             if (trimmed !== value) {
-                return 'Name darf nicht mit Leerzeichen beginnen oder enden';
+                return 'Name must not start or end with spaces';
             }
             if (/\s{2,}/.test(value)) {
-                return 'Keine mehrfachen Leerzeichen erlaubt';
+                return 'Multiple spaces are not allowed';
             }
             return null;
         }
@@ -122,7 +122,7 @@ export const validationRules = {
         customValidator: (value) => {
             const trimmed = value.trim();
             if (trimmed.length === 0) {
-                return 'Titel darf nicht leer sein';
+                return 'Title must not be empty';
             }
             return null;
         }
@@ -134,7 +134,7 @@ export const validationRules = {
         customValidator: (value) => {
             const trimmed = value.trim();
             if (trimmed.length === 0) {
-                return 'Frage darf nicht leer sein';
+                return 'Question must not be empty';
             }
             return null;
         }
@@ -146,7 +146,7 @@ export const validationRules = {
         customValidator: (value) => {
             const trimmed = value.trim();
             if (trimmed.length === 0) {
-                return 'Antwort darf nicht leer sein';
+                return 'Answer must not be empty';
             }
             return null;
         }

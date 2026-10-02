@@ -112,7 +112,7 @@ export const SliderAnswers = ({answers, onChange}) => {
                     max={config.max}
                     step={step}
                 />
-                <span className="slider-value-label">Richtige Antwort</span>
+                <span className="slider-value-label">Correct answer</span>
             </div>
 
             <div className="slider-track-row">

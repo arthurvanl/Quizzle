@@ -11,7 +11,7 @@ const Dialog = ({
                     onConfirm,
                     onCancel,
                     confirmText = "OK",
-                    cancelText = "Abbrechen",
+                    cancelText = "Cancel",
                     showCancelButton = true,
                     className = ""
                 }) => {

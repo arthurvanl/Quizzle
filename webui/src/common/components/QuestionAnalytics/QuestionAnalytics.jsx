@@ -1,7 +1,7 @@
 import React from 'react';
 import './styles.sass';
 
-const DIFFICULTY_LABEL = {easy: 'Einfach', medium: 'Mittel', hard: 'Schwer'};
+const DIFFICULTY_LABEL = {easy: 'Easy', medium: 'Medium', hard: 'Hard'};
 
 const QuestionAnalytics = ({analyticsData}) => {
     const {questionAnalytics} = analyticsData;
@@ -18,7 +18,7 @@ const QuestionAnalytics = ({analyticsData}) => {
                     return (
                         <div key={index} className="qa-row">
                             <div className="qa-top">
-                                <div className="qa-number">Frage {index + 1}</div>
+                                <div className="qa-number">Question {index + 1}</div>
                                 <div className={`qa-difficulty ${q.difficulty}`}>
                                     {DIFFICULTY_LABEL[q.difficulty] || '—'}
                                 </div>

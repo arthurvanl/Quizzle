@@ -94,7 +94,7 @@ export const AITopicPopover = ({generating, onGenerate, onStop, onOpenAdvanced})
                             ref={inputRef}
                             className="ai-topic-input"
                             type="text"
-                            placeholder="Thema eingeben..."
+                            placeholder="Enter topic..."
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
@@ -103,7 +103,7 @@ export const AITopicPopover = ({generating, onGenerate, onStop, onOpenAdvanced})
                         <input
                             className="ai-count-input"
                             type="number"
-                            placeholder="Anz."
+                            placeholder="No."
                             value={count}
                             onChange={(e) => setCount(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
@@ -115,7 +115,7 @@ export const AITopicPopover = ({generating, onGenerate, onStop, onOpenAdvanced})
                                 onClick={handleAdvanced}
                                 type="secondary compact"
                                 icon={faSliders}
-                                ariaLabel="Erweiterte Optionen: PDF, URL, Wikipedia"
+                                ariaLabel="Advanced options: PDF, URL, Wikipedia"
                             />
                         )}
                         <Button
@@ -123,7 +123,7 @@ export const AITopicPopover = ({generating, onGenerate, onStop, onOpenAdvanced})
                             type="primary compact"
                             icon={faWandMagicSparkles}
                             disabled={!topic.trim()}
-                            ariaLabel="Quiz generieren"
+                            ariaLabel="Generate quiz"
                         />
                     </div>
                 </motion.div>
@@ -136,7 +136,7 @@ export const AITopicPopover = ({generating, onGenerate, onStop, onOpenAdvanced})
             <div
                 className={`action-button ai-generate ${generating ? 'generating' : ''}`}
                 onClick={handleButtonClick}
-                title={generating ? "Generierung abbrechen" : "Quiz mit KI generieren"}
+                title={generating ? "Cancel generation" : "Generate quiz with AI"}
             >
                 <FontAwesomeIcon icon={generating ? faSpinner : faWandMagicSparkles} spin={generating}/>
             </div>

@@ -7,16 +7,16 @@ import "./styles.sass";
 export const CodeInput = ({joinGame, errorClass, scanQr}) => {
     return (
         <>
-            <h2>Code eingeben</h2>
+            <h2>Enter code</h2>
             <CodeWrapper onChange={joinGame} errorClass={errorClass}/>
 
             <div className="alternative">
                 <hr/>
-                <h2>oder</h2>
+                <h2>or</h2>
                 <hr/>
             </div>
 
-            <Button text="Code Scannen" icon={faQrcode} padding={"0.7rem 1.5rem"} onClick={() => scanQr()}/>
+            <Button text="Scan code" icon={faQrcode} padding={"0.7rem 1.5rem"} onClick={() => scanQr()}/>
         </>
     )
 }

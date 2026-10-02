@@ -5,7 +5,7 @@ export const AnswerContent = ({answer, index, className = "answer-content"}) => 
         return (
             <img
                 src={answer.content}
-                alt={`Antwort ${index + 1}`}
+                alt={`Answer ${index + 1}`}
                 className={`${className}-image`}
             />
         );

@@ -9,13 +9,13 @@ const { getConfig } = require('../utils/file');
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     limit: 10,
-    message: { message: "Zu viele Anfragen. Bitte versuche es später erneut." }
+    message: { message: "Too many requests. Please try again later." }
 });
 
 const extractLimiter = rateLimit({
     windowMs: 1 * 60 * 1000,
     limit: 15,
-    message: { message: "Zu viele Anfragen. Bitte versuche es später erneut." }
+    message: { message: "Too many requests. Please try again later." }
 });
 
 app.get('/status', (req, res) => {
@@ -61,24 +61,24 @@ const fetchQuestionImage = async (questionTitle) => {
 
 app.post('/extract', requireAuth, extractLimiter, async (req, res) => {
     if (!isConfigured()) {
-        return res.status(503).json({ message: "KI ist nicht konfiguriert." });
+        return res.status(503).json({ message: "AI is not configured." });
     }
 
     const { type, url, query, lang, pdfBase64 } = req.body || {};
     if (!type || !['url', 'wikipedia', 'pdf'].includes(type)) {
-        return res.status(400).json({ message: "Unbekannter Extraktionstyp." });
+        return res.status(400).json({ message: "Unknown extraction type." });
     }
 
     try {
         let result;
         if (type === 'url') {
-            if (!url || typeof url !== 'string') return res.status(400).json({ message: "URL ist erforderlich." });
+            if (!url || typeof url !== 'string') return res.status(400).json({ message: "URL is required." });
             result = await extractFromUrl(url);
         } else if (type === 'wikipedia') {
-            if (!query || typeof query !== 'string') return res.status(400).json({ message: "Suchbegriff ist erforderlich." });
-            result = await extractFromWikipedia(query, lang || 'de');
+            if (!query || typeof query !== 'string') return res.status(400).json({ message: "Search term is required." });
+            result = await extractFromWikipedia(query, lang || 'en');
         } else {
-            if (!pdfBase64 || typeof pdfBase64 !== 'string') return res.status(400).json({ message: "PDF-Daten fehlen." });
+            if (!pdfBase64 || typeof pdfBase64 !== 'string') return res.status(400).json({ message: "PDF data missing." });
             result = await extractFromPdf(pdfBase64);
         }
         return res.json({
@@ -88,7 +88,7 @@ app.post('/extract', requireAuth, extractLimiter, async (req, res) => {
             length: result.text.length
         });
     } catch (error) {
-        return res.status(400).json({ message: error.message || "Extraktion fehlgeschlagen." });
+        return res.status(400).json({ message: error.message || "Extraction failed." });
     }
 });
 
@@ -151,20 +151,20 @@ const validateGenerateRequest = (body) => {
     const hasTopic = typeof topic === 'string' && topic.trim().length >= 2;
     const hasContext = typeof context === 'string' && context.trim().length >= 50;
 
-    if (!hasTopic && !hasContext) return { error: "Ein Thema oder ein Kontext ist erforderlich." };
-    if (hasTopic && topic.trim().length > 400) return { error: "Thema darf maximal 400 Zeichen lang sein." };
-    if (hasContext && context.length > 80000) return { error: "Kontext ist zu groß." };
+    if (!hasTopic && !hasContext) return { error: "A topic or context is required." };
+    if (hasTopic && topic.trim().length > 400) return { error: "Topic must be at most 400 characters long." };
+    if (hasContext && context.length > 80000) return { error: "Context is too large." };
     if (questionCount !== undefined && (typeof questionCount !== 'number' || questionCount < 1 || questionCount > 50)) {
-        return { error: "Fragenanzahl muss zwischen 1 und 50 liegen." };
+        return { error: "Question count must be between 1 and 50." };
     }
     if (difficulty !== undefined && difficulty !== null && !['none', 'easy', 'medium', 'hard'].includes(difficulty)) {
-        return { error: "Ungültige Schwierigkeit." };
+        return { error: "Invalid difficulty." };
     }
     return { hasTopic, hasContext };
 };
 
 app.post('/generate', requireAuth, limiter, async (req, res) => {
-    if (!isConfigured()) return res.status(503).json({ message: "KI ist nicht konfiguriert." });
+    if (!isConfigured()) return res.status(503).json({ message: "AI is not configured." });
 
     const body = req.body || {};
     const { topic, questionCount, context, difficulty, generateMetadata } = body;
@@ -172,7 +172,7 @@ app.post('/generate', requireAuth, limiter, async (req, res) => {
     if (validation.error) return res.status(400).json({ message: validation.error });
 
     const provider = getProvider();
-    if (!provider) return res.status(503).json({ message: "KI-Anbieter nicht verfügbar." });
+    if (!provider) return res.status(503).json({ message: "AI provider not available." });
 
     res.writeHead(200, {
         'Content-Type': 'text/event-stream',
@@ -181,7 +181,7 @@ app.post('/generate', requireAuth, limiter, async (req, res) => {
         'X-Accel-Buffering': 'no'
     });
 
-    const effectiveTopic = validation.hasTopic ? topic.trim() : 'Quiz aus bereitgestelltem Quelltext';
+    const effectiveTopic = validation.hasTopic ? topic.trim() : 'Quiz from provided source text';
     const effectiveContext = validation.hasContext ? context : undefined;
     const effectiveDifficulty = difficulty && difficulty !== 'none' ? difficulty : undefined;
 
@@ -246,7 +246,7 @@ app.post('/generate', requireAuth, limiter, async (req, res) => {
         sendEvent({ type: 'done', total: sentQuestions });
     } catch (error) {
         console.error('AI generation error:', error);
-        sendEvent({ type: 'error', message: error.message || 'Fehler bei der Generierung.' });
+        sendEvent({ type: 'error', message: error.message || 'Error during generation.' });
     }
 
     res.end();

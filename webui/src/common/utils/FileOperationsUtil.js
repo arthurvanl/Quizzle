@@ -22,7 +22,7 @@ export const importQuizzleFile = (file) => {
                 const data = pako.inflate(e.target.result, {to: "string"});
                 const parsedData = JSON.parse(data);
 
-                if (parsedData.__type !== "QUIZZLE2") throw new Error("Ungültiges Dateiformat.");
+                if (parsedData.__type !== "QUIZZLE2") throw new Error("Invalid file format.");
 
                 const questions = await Promise.all(parsedData.questions.map(async (q) => {
                     const newUuid = generateUuid();
@@ -64,7 +64,7 @@ export const importQuizzleFile = (file) => {
                 resolve({title: parsedData.title, questions: questions, settings: parsedData.settings || null});
             } catch (e) {
                 console.error("Import error:", e);
-                reject(new Error("Ungültiges Dateiformat."));
+                reject(new Error("Invalid file format."));
             }
         };
         reader.readAsArrayBuffer(file);
@@ -84,7 +84,7 @@ export const downloadQuizzleFile = (quizData, filename) => {
 
 const handleImageUpload = (file, onSuccess, onError) => {
     if (!file || !file.type.startsWith('image/')) {
-        if (onError) onError(new Error("Nur Bilddateien sind erlaubt."));
+        if (onError) onError(new Error("Only image files are allowed."));
         return;
     }
 
@@ -93,7 +93,7 @@ const handleImageUpload = (file, onSuccess, onError) => {
         if (onSuccess) onSuccess(e.target.result);
     };
     reader.onerror = () => {
-        if (onError) onError(new Error("Fehler beim Lesen der Datei."));
+        if (onError) onError(new Error("Failed to read the file."));
     };
     reader.readAsDataURL(file);
 };
