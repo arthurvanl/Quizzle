@@ -16,6 +16,7 @@ import SoundRenderer from "@/common/components/SoundRenderer";
 import SoundControl from "@/common/components/SoundControl";
 import BackgroundChooser from "@/common/components/BackgroundChooser";
 import toast from "react-hot-toast";
+import {postRequest} from "@/common/utils/RequestUtil.js";
 
 export const Host = () => {
     const navigate = useNavigate();
@@ -45,8 +46,18 @@ export const Host = () => {
             return;
         }
 
-        socket.emit("CREATE_ROOM", {settings: quizRaw?.settings || {}}, (roomCode) => {
-            setRoomCode(roomCode);
+        postRequest("/auth/host-ticket").then(({ticket}) => {
+            socket.emit("CREATE_ROOM", {settings: quizRaw?.settings || {}, ticket}, (roomCode) => {
+                if (roomCode?.error) {
+                    toast.error(roomCode.error);
+                    navigate("/");
+                    return;
+                }
+                setRoomCode(roomCode);
+            });
+        }).catch(() => {
+            toast.error("Login required to host a room.");
+            navigate("/");
         });
 
         socket.on("PLAYER_JOINED", (player) => {

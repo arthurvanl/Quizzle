@@ -1,4 +1,5 @@
 const {generateRoomCode, isAlphabeticCode} = require("./utils/random");
+const {consumeHostTicket} = require("./utils/auth");
 const {validateSchemaSocket} = require("./utils/error");
 const {checkRoom, joinRoom, answerQuestion} = require("./validations/socket");
 const {questionValidation} = require("./validations/quiz");
@@ -101,8 +102,10 @@ module.exports = (io, socket) => {
             if (rooms[roomCode].host === socket.id) return callback(roomCode);
         }
 
-        const roomCode = generateRoomCode();
-        while (rooms[roomCode]) generateRoomCode();
+        if (!consumeHostTicket(data?.ticket)) return callback({error: 'Login required to host a room.'});
+
+        let roomCode = generateRoomCode();
+        while (rooms[roomCode]) roomCode = generateRoomCode();
 
         socket.join(roomCode.toString());
         rooms[roomCode] = {

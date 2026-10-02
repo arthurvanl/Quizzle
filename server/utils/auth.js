@@ -11,6 +11,10 @@ const TOKEN_LENGTH = 48;
 const TOKEN_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 const sessions = new Map();
+const hostTickets = new Map();
+const HOST_TICKET_EXPIRY = 60 * 1000;
+
+const isApproved = (user) => !user.status || user.status === 'approved';
 
 const hashPassword = (password) => {
     const salt = crypto.randomBytes(SALT_LENGTH).toString('hex');
@@ -47,7 +51,7 @@ const isSetupComplete = () => {
     return data.users.length > 0;
 };
 
-const createUser = (username, password, role = 'teacher') => {
+const createUser = (username, password, role = 'teacher', status = 'approved') => {
     const data = readUsers();
 
     if (data.users.find(u => u.username.toLowerCase() === username.toLowerCase())) {
@@ -59,6 +63,7 @@ const createUser = (username, password, role = 'teacher') => {
         username,
         password: hashPassword(password),
         role,
+        status,
         createdAt: new Date().toISOString()
     };
 
@@ -81,6 +86,9 @@ const login = (username, password) => {
     } catch {
         return {error: 'Invalid credentials.'};
     }
+
+    if (user.status === 'pending') return {error: 'Your account is awaiting approval by an administrator.'};
+    if (user.status === 'denied') return {error: 'Your account request was denied.'};
 
     const token = generateToken();
     const expiresAt = Date.now() + TOKEN_EXPIRY;
@@ -108,7 +116,7 @@ const validateToken = (token) => {
 
     const data = readUsers();
     const user = data.users.find(u => u.id === session.userId);
-    if (!user) return null;
+    if (!user || !isApproved(user)) return null;
 
     return {id: user.id, username: user.username, role: user.role};
 };
@@ -123,6 +131,7 @@ const getUsers = () => {
         id: u.id,
         username: u.username,
         role: u.role,
+        status: u.status || 'approved',
         createdAt: u.createdAt
     }));
 };
@@ -153,6 +162,42 @@ const updateUserRole = (userId, role) => {
     return {user: {id: user.id, username: user.username, role: user.role}};
 };
 
+const updateUserStatus = (userId, status) => {
+    const data = readUsers();
+    const user = data.users.find(u => u.id === userId);
+    if (!user) return {error: 'User not found.'};
+
+    user.status = status;
+    writeUsers(data);
+
+    if (status !== 'approved') {
+        for (const [t, s] of sessions) {
+            if (s.userId === userId) sessions.delete(t);
+        }
+    }
+
+    return {user: {id: user.id, username: user.username, role: user.role, status: user.status}};
+};
+
+const createHostTicket = (userId) => {
+    const now = Date.now();
+    for (const [t, entry] of hostTickets) {
+        if (entry.expiresAt <= now) hostTickets.delete(t);
+    }
+
+    const ticket = generateToken();
+    hostTickets.set(ticket, {userId, expiresAt: now + HOST_TICKET_EXPIRY});
+    return ticket;
+};
+
+const consumeHostTicket = (ticket) => {
+    if (typeof ticket !== 'string') return false;
+
+    const entry = hostTickets.get(ticket);
+    hostTickets.delete(ticket);
+    return !!entry && entry.expiresAt > Date.now();
+};
+
 const changePassword = (userId, newPassword) => {
     const data = readUsers();
     const user = data.users.find(u => u.id === userId);
@@ -173,5 +218,8 @@ module.exports = {
     getUsers,
     deleteUser,
     updateUserRole,
+    updateUserStatus,
+    createHostTicket,
+    consumeHostTicket,
     changePassword
 };

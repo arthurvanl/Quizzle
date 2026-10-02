@@ -39,6 +39,10 @@ export const AuthProvider = ({children}) => {
         return data.user;
     };
 
+    const register = async (username, password) => {
+        await postRequest("/auth/register", {username, password});
+    };
+
     const logout = async () => {
         try {
             await postRequest("/auth/logout");
@@ -74,7 +78,7 @@ export const AuthProvider = ({children}) => {
     return (
         <AuthContext.Provider value={{
             user, isAuthenticated, isAdmin, authLoading,
-            login, logout, requireAuth, checkSession,
+            login, register, logout, requireAuth, checkSession,
             showLoginDialog, handleLoginSuccess, closeLoginDialog
         }}>
             {children}

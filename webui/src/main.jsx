@@ -21,6 +21,7 @@ import InGameClient from "@/pages/InGameClient";
 import PracticeResults from "@/pages/PracticeResults";
 import Admin from "@/pages/Admin";
 import Credits from "@/pages/Credits";
+import RequireAuth from "@/common/components/RequireAuth";
 
 const router = createBrowserRouter([
     {
@@ -29,8 +30,8 @@ const router = createBrowserRouter([
         errorElement: <Navigate to="/"/>,
         children: [
             {path: '/', element: <Home/>},
-            {path: '/create', element: <QuizCreator />},
-            {path: '/load', element: <QuizLoader />},
+            {path: '/create', element: <RequireAuth><QuizCreator /></RequireAuth>},
+            {path: '/load', element: <RequireAuth><QuizLoader /></RequireAuth>},
             {path: '/host/lobby', element: <Host />},
             {path: '/host/ingame', element: <InGameHost />},
             {path: '/host/ending', element: <EndingHost />},

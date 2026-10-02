@@ -288,6 +288,36 @@
     background: rgba(236, 85, 85, 0.1)
     color: $red
 
+.pending-badge
+  margin-left: auto
+  background: $red
+  color: white
+  font-size: 0.75rem
+  font-weight: 700
+  border-radius: 999px
+  padding: 0.1rem 0.5rem
+
+.user-list-heading
+  display: flex
+  align-items: center
+  gap: 0.5rem
+  margin: 1.5rem 0 0 0
+  font-size: 1rem
+  color: $text
+
+.user-card.pending
+  border-color: color-mix(in srgb, $orange 50%, transparent)
+
+.user-info .role-icon.pending
+  color: $orange
+
+.denied-label
+  color: $red
+
+.icon-btn.approve:hover
+  background: rgba(28, 148, 90, 0.1)
+  color: $green
+
 .quiz-filter
   min-width: 12rem
 

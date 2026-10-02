@@ -1,6 +1,6 @@
 const app = require('express').Router();
 const {requireAdmin} = require('../middleware/auth');
-const {getUsers, createUser, deleteUser, updateUserRole, changePassword} = require('../utils/auth');
+const {getUsers, createUser, deleteUser, updateUserRole, updateUserStatus, changePassword} = require('../utils/auth');
 const fs = require('fs');
 const path = require('path');
 const {brandingFolder, dataFolder, quizzesFolder} = require('../utils/file');
@@ -295,6 +295,26 @@ app.put('/users/:userId/role', requireAdmin, (req, res) => {
     }
 
     const result = updateUserRole(userId, role);
+    if (result.error) {
+        return res.status(400).json({message: result.error});
+    }
+
+    res.json(result);
+});
+
+app.put('/users/:userId/status', requireAdmin, (req, res) => {
+    const {userId} = req.params;
+    const {status} = req.body;
+
+    if (!['approved', 'denied'].includes(status)) {
+        return res.status(400).json({message: 'Invalid status.'});
+    }
+
+    if (userId === req.user.id) {
+        return res.status(400).json({message: 'You cannot change your own status.'});
+    }
+
+    const result = updateUserStatus(userId, status);
     if (result.error) {
         return res.status(400).json({message: result.error});
     }

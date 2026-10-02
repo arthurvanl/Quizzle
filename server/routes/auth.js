@@ -1,7 +1,7 @@
 const rateLimit = require('express-rate-limit');
 const app = require('express').Router();
-const {isSetupComplete, createUser, login, validateToken, logout} = require('../utils/auth');
-const {extractToken} = require('../middleware/auth');
+const {isSetupComplete, createUser, login, validateToken, logout, createHostTicket} = require('../utils/auth');
+const {extractToken, requireAuth} = require('../middleware/auth');
 
 const loginLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -14,6 +14,20 @@ const setupLimiter = rateLimit({
     limit: 5,
     message: {message: 'Too many attempts. Please try again later.'}
 });
+
+const registerLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000,
+    limit: 5,
+    message: {message: 'Too many account requests. Please try again later.'}
+});
+
+const validateCredentials = (username, password) => {
+    if (!username || !password) return 'Username and password are required.';
+    if (username.length < 3 || username.length > 32) return 'Username must be between 3 and 32 characters.';
+    if (password.length < 6) return 'Password must be at least 6 characters long.';
+    if (!/^[a-zA-Z0-9_.-]+$/.test(username)) return 'Username may only contain letters, numbers, dots, hyphens and underscores.';
+    return null;
+};
 
 const TOKEN_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
@@ -38,20 +52,9 @@ app.post('/setup', setupLimiter, (req, res) => {
 
     const {username, password} = req.body;
 
-    if (!username || !password) {
-        return res.status(400).json({message: 'Username and password are required.'});
-    }
-
-    if (username.length < 3 || username.length > 32) {
-        return res.status(400).json({message: 'Username must be between 3 and 32 characters.'});
-    }
-
-    if (password.length < 6) {
-        return res.status(400).json({message: 'Password must be at least 6 characters long.'});
-    }
-
-    if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
-        return res.status(400).json({message: 'Username may only contain letters, numbers, dots, hyphens and underscores.'});
+    const credentialsError = validateCredentials(username, password);
+    if (credentialsError) {
+        return res.status(400).json({message: credentialsError});
     }
 
     const result = createUser(username, password, 'admin');
@@ -66,6 +69,30 @@ app.post('/setup', setupLimiter, (req, res) => {
 
     setTokenCookie(res, loginResult.token);
     res.json({user: loginResult.user});
+});
+
+app.post('/register', registerLimiter, (req, res) => {
+    if (!isSetupComplete()) {
+        return res.status(400).json({message: 'Setup has not been completed yet.'});
+    }
+
+    const {username, password} = req.body;
+
+    const credentialsError = validateCredentials(username, password);
+    if (credentialsError) {
+        return res.status(400).json({message: credentialsError});
+    }
+
+    const result = createUser(username, password, 'teacher', 'pending');
+    if (result.error) {
+        return res.status(400).json({message: result.error});
+    }
+
+    res.json({success: true});
+});
+
+app.post('/host-ticket', requireAuth, (req, res) => {
+    res.json({ticket: createHostTicket(req.user.id)});
 });
 
 app.post('/login', loginLimiter, (req, res) => {

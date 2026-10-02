@@ -241,16 +241,16 @@ export const Home = () => {
                 <div className={`action-area ${code !== null ? 'disabled' : ''}`}>
                     <Button text="Create quiz" icon={faSwatchbook} padding={"0.8rem 2.5rem"}
                             disabled={code !== null}
-                            onClick={() => {
+                            onClick={() => requireAuth(() => {
                                 setCirclePosition("-30rem 0 0 -30rem");
                                 setTimeout(() => navigate("/create"), 500);
-                            }}/>
+                            })}/>
                     <Button text="Host room" icon={faShareFromSquare} padding={"0.8rem 2.5rem"}
                             disabled={code !== null}
-                            onClick={() => {
+                            onClick={() => requireAuth(() => {
                                 setCirclePosition("-30rem 0 0 -30rem");
                                 setTimeout(() => navigate("/load"), 500);
-                            }}/>
+                            })}/>
                     {isAdmin && (
                         <Button text="Admin" icon={faGear} padding={"0.8rem 2.5rem"} type="secondary"
                                 disabled={code !== null}

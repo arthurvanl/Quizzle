@@ -12,7 +12,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faUsers, faRobot, faPalette, faPlus, faTrash,
     faShieldAlt, faChalkboardTeacher, faKey, faRightFromBracket, faUpload, faRotateLeft, faImage,
-    faListUl, faChartBar, faEye
+    faListUl, faChartBar, faEye, faCheck, faXmark, faUserClock
 } from "@fortawesome/free-solid-svg-icons";
 import {motion} from "framer-motion";
 import toast from "react-hot-toast";
@@ -298,6 +298,18 @@ export const Admin = () => {
         }
     };
 
+    const setUserStatus = async (userId, status) => {
+        try {
+            await putRequest(`/admin/users/${userId}/status`, {status});
+            toast.success(status === 'approved' ? 'Account approved.' : 'Account denied.');
+            loadUsers();
+        } catch (error) {
+            toast.error(error.message || 'Failed to update.');
+        }
+    };
+
+    const pendingUsers = users.filter(u => u.status === 'pending');
+
     const resetPassword = async () => {
         if (!newPasswordValue || newPasswordValue.length < 6) {
             toast.error('Password must be at least 6 characters long.');
@@ -347,6 +359,7 @@ export const Admin = () => {
                     </button>
                     <button className={`sidebar-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
                         <FontAwesomeIcon icon={faUsers}/> User management
+                        {pendingUsers.length > 0 && <span className="pending-badge">{pendingUsers.length}</span>}
                     </button>
                     <button className={`sidebar-item ${activeTab === 'quizzes' ? 'active' : ''}`} onClick={() => setActiveTab('quizzes')}>
                         <FontAwesomeIcon icon={faListUl}/> Quizzes
@@ -488,19 +501,59 @@ export const Admin = () => {
                                 <Button text="New user" icon={faPlus} type="primary compact" onClick={() => setShowNewUserDialog(true)}/>
                             </div>
 
+                            {pendingUsers.length > 0 && (
+                                <>
+                                    <h3 className="user-list-heading"><FontAwesomeIcon icon={faUserClock}/> Pending requests</h3>
+                                    <div className="user-list">
+                                        {pendingUsers.map(u => (
+                                            <div key={u.id} className="user-card pending">
+                                                <div className="user-info">
+                                                    <FontAwesomeIcon icon={faUserClock} className="role-icon pending"/>
+                                                    <div>
+                                                        <span className="user-name">{u.username}</span>
+                                                        <span className="user-role">Requested {u.createdAt ? formatDate(u.createdAt) : ''}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="user-actions">
+                                                    <button className="icon-btn approve" title="Approve" onClick={() => setUserStatus(u.id, 'approved')}>
+                                                        <FontAwesomeIcon icon={faCheck}/>
+                                                    </button>
+                                                    <button className="icon-btn danger" title="Deny" onClick={() => setUserStatus(u.id, 'denied')}>
+                                                        <FontAwesomeIcon icon={faXmark}/>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <h3 className="user-list-heading"><FontAwesomeIcon icon={faUsers}/> Accounts</h3>
+                                </>
+                            )}
+
                             <div className="user-list">
-                                {users.map(u => (
+                                {users.filter(u => u.status !== 'pending').map(u => (
                                     <div key={u.id} className="user-card">
                                         <div className="user-info">
                                             <FontAwesomeIcon icon={u.role === 'admin' ? faShieldAlt : faChalkboardTeacher} className={`role-icon ${u.role}`}/>
                                             <div>
                                                 <span className="user-name">{u.username}</span>
-                                                <span className="user-role">{u.role === 'admin' ? 'Administrator' : 'Teacher'}</span>
+                                                <span className="user-role">
+                                                    {u.role === 'admin' ? 'Administrator' : 'Teacher'}
+                                                    {u.status === 'denied' && <span className="denied-label"> · Denied</span>}
+                                                </span>
                                             </div>
                                         </div>
                                         <div className="user-actions">
                                             {u.id !== user?.id && (
                                                 <>
+                                                    {u.status === 'denied' ? (
+                                                        <button className="icon-btn approve" title="Approve" onClick={() => setUserStatus(u.id, 'approved')}>
+                                                            <FontAwesomeIcon icon={faCheck}/>
+                                                        </button>
+                                                    ) : (
+                                                        <button className="icon-btn" title="Block account" onClick={() => setUserStatus(u.id, 'denied')}>
+                                                            <FontAwesomeIcon icon={faXmark}/>
+                                                        </button>
+                                                    )}
                                                     <button className="icon-btn" title="Toggle role" onClick={() => toggleRole(u.id, u.role)}>
                                                         <FontAwesomeIcon icon={u.role === 'admin' ? faChalkboardTeacher : faShieldAlt}/>
                                                     </button>
