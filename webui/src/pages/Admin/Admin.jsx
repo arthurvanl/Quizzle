@@ -10,7 +10,8 @@ import Dialog from "@/common/components/Dialog";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faUsers, faRobot, faPalette, faPlus, faTrash,
-    faShieldAlt, faChalkboardTeacher, faKey, faRightFromBracket, faUpload, faRotateLeft, faImage
+    faShieldAlt, faChalkboardTeacher, faKey, faRightFromBracket, faUpload, faRotateLeft, faImage,
+    faListUl, faChartBar
 } from "@fortawesome/free-solid-svg-icons";
 import {motion} from "framer-motion";
 import toast from "react-hot-toast";
@@ -32,6 +33,8 @@ export const Admin = () => {
     const [activeTab, setActiveTab] = useState('ai');
     const [settings, setSettings] = useState(null);
     const [users, setUsers] = useState([]);
+    const [quizzes, setQuizzes] = useState([]);
+    const [quizOwnerFilter, setQuizOwnerFilter] = useState('all');
     const [loading, setLoading] = useState(true);
 
     const [aiProvider, setAiProvider] = useState('');
@@ -70,6 +73,10 @@ export const Admin = () => {
         loadSettings();
         loadUsers();
     }, [isAdmin, navigate]);
+
+    useEffect(() => {
+        if (isAdmin && activeTab === 'quizzes') loadQuizzes();
+    }, [isAdmin, activeTab]);
 
     useEffect(() => {
         if (!aiProvider) {
@@ -120,6 +127,29 @@ export const Admin = () => {
             toast.error('Could not load users.');
         }
     };
+
+    const loadQuizzes = async () => {
+        try {
+            const data = await jsonRequest('/admin/quizzes');
+            setQuizzes(data.quizzes || []);
+        } catch (error) {
+            toast.error('Could not load quizzes.');
+        }
+    };
+
+    const quizOwnerOptions = [
+        {value: 'all', label: 'All accounts'},
+        ...users.map(u => ({value: u.id, label: u.username})),
+        ...(quizzes.some(q => !q.createdBy) ? [{value: 'unknown', label: 'Unknown creator'}] : [])
+    ];
+
+    const filteredQuizzes = quizzes.filter(q => {
+        if (quizOwnerFilter === 'all') return true;
+        if (quizOwnerFilter === 'unknown') return !q.createdBy;
+        return q.createdBy === quizOwnerFilter;
+    });
+
+    const formatDate = (date) => new Date(date).toLocaleString('en-GB', {dateStyle: 'medium', timeStyle: 'short'});
 
     const saveAiSettings = async () => {
         try {
@@ -293,6 +323,9 @@ export const Admin = () => {
                     <button className={`sidebar-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
                         <FontAwesomeIcon icon={faUsers}/> User management
                     </button>
+                    <button className={`sidebar-item ${activeTab === 'quizzes' ? 'active' : ''}`} onClick={() => setActiveTab('quizzes')}>
+                        <FontAwesomeIcon icon={faListUl}/> Quizzes
+                    </button>
                 </div>
 
                 <div className="admin-panel">
@@ -455,6 +488,44 @@ export const Admin = () => {
                                                 </>
                                             )}
                                             {u.id === user?.id && <span className="you-badge">You</span>}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {activeTab === 'quizzes' && (
+                        <motion.div className="settings-section" initial={{opacity: 0}} animate={{opacity: 1}}>
+                            <div className="section-header-row">
+                                <div>
+                                    <h2><FontAwesomeIcon icon={faListUl}/> Quizzes</h2>
+                                    <p className="section-description">All quizzes created on this instance. Quizzes created before creator tracking show as unknown.</p>
+                                </div>
+                                <div className="quiz-filter">
+                                    <SelectBox value={quizOwnerFilter} onChange={setQuizOwnerFilter} options={quizOwnerOptions}/>
+                                </div>
+                            </div>
+
+                            <div className="user-list">
+                                {filteredQuizzes.length === 0 && <div className="quiz-empty">No quizzes found.</div>}
+                                {filteredQuizzes.map(q => (
+                                    <div key={`${q.type}-${q.id}`} className="user-card">
+                                        <div className="user-info">
+                                            <div>
+                                                <span className="user-name">{q.title}</span>
+                                                <span className="user-role">
+                                                    {q.type === 'live' ? 'Live quiz' : 'Practice quiz'} · {q.id} · {q.questionCount} {q.questionCount === 1 ? 'question' : 'questions'} · {formatDate(q.created)} · by {q.createdByName || 'unknown'}
+                                                    {q.type === 'practice' && q.expiry && new Date(q.expiry) < new Date() && ' · expired'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="user-actions">
+                                            {q.type === 'practice' && (
+                                                <Link className="icon-btn" title="View results" to={`/results/${q.id}`}>
+                                                    <FontAwesomeIcon icon={faChartBar}/>
+                                                </Link>
+                                            )}
                                         </div>
                                     </div>
                                 ))}

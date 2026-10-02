@@ -9,7 +9,7 @@ const {generateQuizId} = require("../utils/random");
 const {requireAuth} = require("../middleware/auth");
 const {compressQuiz} = require("../utils/quiz");
 
-const uploadFile = async (content) => {
+const uploadFile = async (content, user) => {
     let random = generateQuizId();
 
     while (await checkIfExists(path.join(quizzesFolder, `${random}.quizzle`))) {
@@ -19,6 +19,13 @@ const uploadFile = async (content) => {
     const compressed = compressQuiz({__type: "QUIZZLE2", ...content});
 
     fs.writeFile(path.join(quizzesFolder, `${random}.quizzle`), compressed, (err) => {
+        if (err) {
+            console.error(err);
+        }
+    });
+
+    const meta = {created: new Date().toISOString(), createdBy: user.id, createdByName: user.username};
+    fs.writeFile(path.join(quizzesFolder, `${random}.meta.json`), JSON.stringify(meta, null, 2), (err) => {
         if (err) {
             console.error(err);
         }
@@ -56,7 +63,7 @@ app.get('/:quizId', (req, res) => {
 app.put("/", limiter, requireAuth, async (req, res) => {
     if (validateSchema(res, quizUpload, req.body)) return;
 
-    const quizId = await uploadFile(req.body);
+    const quizId = await uploadFile(req.body, req.user);
     res.json({quizId});
 });
 

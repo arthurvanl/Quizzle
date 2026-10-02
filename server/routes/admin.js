@@ -3,8 +3,70 @@ const {requireAdmin} = require('../middleware/auth');
 const {getUsers, createUser, deleteUser, updateUserRole, changePassword} = require('../utils/auth');
 const fs = require('fs');
 const path = require('path');
-const {brandingFolder} = require('../utils/file');
+const {brandingFolder, dataFolder, quizzesFolder} = require('../utils/file');
 const {createProvider} = require('../utils/ai');
+const {decompressQuiz} = require('../utils/quiz');
+
+const practiceQuizzesFolder = path.join(dataFolder, 'practice-quizzes');
+
+const readJson = (filePath) => {
+    try {
+        return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    } catch {
+        return null;
+    }
+};
+
+const summarizeQuiz = (quizPath) => {
+    try {
+        const quiz = decompressQuiz(fs.readFileSync(quizPath));
+        return {title: quiz.title || 'Untitled', questionCount: Array.isArray(quiz.questions) ? quiz.questions.length : 0};
+    } catch {
+        return {title: 'Unreadable quiz', questionCount: 0};
+    }
+};
+
+const listQuizzes = () => {
+    const quizzes = [];
+
+    if (fs.existsSync(quizzesFolder)) {
+        for (const file of fs.readdirSync(quizzesFolder)) {
+            if (!file.endsWith('.quizzle')) continue;
+            const id = file.slice(0, -'.quizzle'.length);
+            const quizPath = path.join(quizzesFolder, file);
+            const meta = readJson(path.join(quizzesFolder, `${id}.meta.json`)) || {};
+
+            quizzes.push({
+                id,
+                type: 'live',
+                ...summarizeQuiz(quizPath),
+                created: meta.created || fs.statSync(quizPath).mtime.toISOString(),
+                createdBy: meta.createdBy || null,
+                createdByName: meta.createdByName || null
+            });
+        }
+    }
+
+    if (fs.existsSync(practiceQuizzesFolder)) {
+        for (const code of fs.readdirSync(practiceQuizzesFolder)) {
+            const quizPath = path.join(practiceQuizzesFolder, code, 'quiz.quizzle');
+            if (!fs.existsSync(quizPath)) continue;
+            const meta = readJson(path.join(practiceQuizzesFolder, code, 'meta.json')) || {};
+
+            quizzes.push({
+                id: code,
+                type: 'practice',
+                ...summarizeQuiz(quizPath),
+                created: meta.created || fs.statSync(quizPath).mtime.toISOString(),
+                expiry: meta.expiry || null,
+                createdBy: meta.createdBy || null,
+                createdByName: meta.createdByName || null
+            });
+        }
+    }
+
+    return quizzes.sort((a, b) => new Date(b.created) - new Date(a.created));
+};
 
 app.post('/models', requireAdmin, async (req, res) => {
     const {provider, apiKey, baseUrl} = req.body;
@@ -125,6 +187,17 @@ app.delete('/branding/:type', requireAdmin, (req, res) => {
 
     fs.copyFileSync(defaultPath, targetPath);
     res.json({success: true});
+});
+
+app.get('/quizzes', requireAdmin, (req, res) => {
+    const usernames = new Map(getUsers().map(u => [u.id, u.username]));
+
+    const quizzes = listQuizzes().map(quiz => ({
+        ...quiz,
+        createdByName: usernames.get(quiz.createdBy) || quiz.createdByName
+    }));
+
+    res.json({quizzes});
 });
 
 app.get('/users', requireAdmin, (req, res) => {

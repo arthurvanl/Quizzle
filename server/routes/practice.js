@@ -91,7 +91,9 @@ app.put("/", createLimiter, requireAuth, async (req, res) => {
         const expiry = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
         const meta = {
             created: now.toISOString(),
-            expiry: expiry.toISOString()
+            expiry: expiry.toISOString(),
+            createdBy: req.user.id,
+            createdByName: req.user.username
         };
 
         await fs.writeFile(path.join(quizDir, 'meta.json'), JSON.stringify(meta, null, 2));
