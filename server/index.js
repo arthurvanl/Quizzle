@@ -3,7 +3,6 @@ const http = require('http');
 const socketIo = require('socket.io');
 const path = require('path');
 const {firstStart} = require("./utils/file");
-const {startCleanupTask} = require("./utils/cleanup");
 
 const app = express();
 const server = http.createServer(app);
@@ -13,7 +12,6 @@ const PORT = process.env.PORT || 6412;
 
 firstStart();
 
-startCleanupTask();
 
 app.use(express.json({limit: '100mb'}));
 

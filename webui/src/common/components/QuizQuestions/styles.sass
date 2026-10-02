@@ -1,0 +1,75 @@
+@use "@/common/styles/colors" as *
+
+.quiz-questions
+  display: flex
+  flex-direction: column
+  gap: 0.75rem
+
+.qq-question
+  padding: 1rem
+  border: 1px solid $border
+  border-radius: 0.75rem
+  background: $background
+
+.qq-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  gap: 0.5rem
+  margin-bottom: 0.4rem
+  font-size: 0.8rem
+  color: $gray
+  font-weight: 600
+
+.qq-title
+  font-weight: 600
+  font-size: 1rem
+  color: $text
+  margin-bottom: 0.6rem
+  word-break: break-word
+
+.qq-image
+  max-width: 100%
+  max-height: 200px
+  object-fit: contain
+  border-radius: 0.5rem
+  margin-bottom: 0.6rem
+
+.qq-answers
+  display: flex
+  flex-direction: column
+  gap: 0.35rem
+  margin: 0
+
+.qq-sequence
+  padding-left: 1.5rem
+
+.qq-hint
+  font-size: 0.8rem
+  color: $gray
+
+.qq-answer
+  display: flex
+  align-items: center
+  gap: 0.5rem
+  font-size: 0.95rem
+  color: $text
+
+  &.correct svg
+    color: $green
+
+  &.incorrect
+    color: $gray
+
+    svg
+      color: $red
+
+.qq-sequence .qq-answer
+  display: list-item
+
+.qq-slider
+  font-size: 0.95rem
+  color: $text
+
+.qq-empty
+  color: $gray

@@ -34,17 +34,6 @@ const practiceQuizExists = async (code) => {
     }
 };
 
-const isPracticeQuizExpired = async (code) => {
-    try {
-        const metaPath = path.join(practiceQuizzesDir, code, 'meta.json');
-        const metaContent = await fs.readFile(metaPath, 'utf8');
-        const meta = JSON.parse(metaContent);
-        return new Date(meta.expiry) < new Date();
-    } catch {
-        return true;
-    }
-};
-
 const loadPracticeQuiz = async (code) => {
     const quizPath = path.join(practiceQuizzesDir, code, 'quiz.quizzle');
     const quizData = await fs.readFile(quizPath);
@@ -58,10 +47,6 @@ const validatePracticeCode = async (code, res) => {
     }
     if (!await practiceQuizExists(code)) {
         res.status(404).json({message: "Practice quiz not found"});
-        return false;
-    }
-    if (await isPracticeQuizExpired(code)) {
-        res.status(410).json({message: "Practice quiz has expired"});
         return false;
     }
     return true;
@@ -87,11 +72,8 @@ app.put("/", createLimiter, requireAuth, async (req, res) => {
         const compressed = compressQuiz({__type: "QUIZZLE2", ...req.body});
         await fs.writeFile(path.join(quizDir, 'quiz.quizzle'), compressed);
 
-        const now = new Date();
-        const expiry = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
         const meta = {
-            created: now.toISOString(),
-            expiry: expiry.toISOString(),
+            created: new Date().toISOString(),
             createdBy: req.user.id,
             createdByName: req.user.username
         };
@@ -116,11 +98,6 @@ app.get('/:code/exists', async (req, res) => {
         const exists = await practiceQuizExists(code);
         if (!exists) {
             return res.status(404).json({exists: false, message: "Practice quiz not found"});
-        }
-
-        const expired = await isPracticeQuizExpired(code);
-        if (expired) {
-            return res.status(410).json({exists: false, message: "Practice quiz has expired"});
         }
 
         res.json({exists: true});
@@ -437,7 +414,6 @@ app.post('/:code/results', requireAuth, async (req, res) => {
         res.json({
             meta: {
                 created: meta.created,
-                expiry: meta.expiry,
                 totalAttempts,
                 averageScore: Math.round(averageScore * 100) / 100,
                 maxScore,

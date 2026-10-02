@@ -7,11 +7,12 @@ import Button from "@/common/components/Button";
 import Input from "@/common/components/Input";
 import SelectBox from "@/common/components/SelectBox";
 import Dialog from "@/common/components/Dialog";
+import QuizQuestions from "@/common/components/QuizQuestions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faUsers, faRobot, faPalette, faPlus, faTrash,
     faShieldAlt, faChalkboardTeacher, faKey, faRightFromBracket, faUpload, faRotateLeft, faImage,
-    faListUl, faChartBar
+    faListUl, faChartBar, faEye
 } from "@fortawesome/free-solid-svg-icons";
 import {motion} from "framer-motion";
 import toast from "react-hot-toast";
@@ -35,6 +36,8 @@ export const Admin = () => {
     const [users, setUsers] = useState([]);
     const [quizzes, setQuizzes] = useState([]);
     const [quizOwnerFilter, setQuizOwnerFilter] = useState('all');
+    const [viewedQuiz, setViewedQuiz] = useState(null);
+    const [quizToDelete, setQuizToDelete] = useState(null);
     const [loading, setLoading] = useState(true);
 
     const [aiProvider, setAiProvider] = useState('');
@@ -134,6 +137,28 @@ export const Admin = () => {
             setQuizzes(data.quizzes || []);
         } catch (error) {
             toast.error('Could not load quizzes.');
+        }
+    };
+
+    const viewQuiz = async (q) => {
+        try {
+            const data = await jsonRequest(`/admin/quizzes/${q.type}/${q.id}`);
+            if (!data.quiz) throw new Error(data.message);
+            setViewedQuiz({...q, quiz: data.quiz});
+        } catch (error) {
+            toast.error(error.message || 'Could not load quiz.');
+        }
+    };
+
+    const deleteQuiz = async () => {
+        try {
+            await deleteRequest(`/admin/quizzes/${quizToDelete.type}/${quizToDelete.id}`);
+            setQuizzes(quizzes.filter(q => !(q.type === quizToDelete.type && q.id === quizToDelete.id)));
+            toast.success('Quiz deleted.');
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete quiz.');
+        } finally {
+            setQuizToDelete(null);
         }
     };
 
@@ -516,16 +541,21 @@ export const Admin = () => {
                                                 <span className="user-name">{q.title}</span>
                                                 <span className="user-role">
                                                     {q.type === 'live' ? 'Live quiz' : 'Practice quiz'} · {q.id} · {q.questionCount} {q.questionCount === 1 ? 'question' : 'questions'} · {formatDate(q.created)} · by {q.createdByName || 'unknown'}
-                                                    {q.type === 'practice' && q.expiry && new Date(q.expiry) < new Date() && ' · expired'}
                                                 </span>
                                             </div>
                                         </div>
                                         <div className="user-actions">
+                                            <button className="icon-btn" title="View questions" onClick={() => viewQuiz(q)}>
+                                                <FontAwesomeIcon icon={faEye}/>
+                                            </button>
                                             {q.type === 'practice' && (
                                                 <Link className="icon-btn" title="View results" to={`/results/${q.id}`}>
                                                     <FontAwesomeIcon icon={faChartBar}/>
                                                 </Link>
                                             )}
+                                            <button className="icon-btn danger" title="Delete" onClick={() => setQuizToDelete(q)}>
+                                                <FontAwesomeIcon icon={faTrash}/>
+                                            </button>
                                         </div>
                                     </div>
                                 ))}
@@ -534,6 +564,31 @@ export const Admin = () => {
                     )}
                 </div>
             </motion.div>
+
+            <Dialog
+                isOpen={!!viewedQuiz}
+                onClose={() => setViewedQuiz(null)}
+                onConfirm={() => setViewedQuiz(null)}
+                title={viewedQuiz?.title || 'Quiz'}
+                confirmText="Close"
+                showCancelButton={false}
+            >
+                {viewedQuiz && <QuizQuestions quiz={viewedQuiz.quiz}/>}
+            </Dialog>
+
+            <Dialog
+                isOpen={!!quizToDelete}
+                onClose={() => setQuizToDelete(null)}
+                onConfirm={deleteQuiz}
+                title="Delete quiz"
+                confirmText="Delete"
+                cancelText="Cancel"
+            >
+                <p>
+                    This permanently deletes <strong>{quizToDelete?.title}</strong> ({quizToDelete?.id})
+                    {quizToDelete?.type === 'practice' && ' and all of its results'}.
+                </p>
+            </Dialog>
 
             <Dialog
                 isOpen={showNewUserDialog}

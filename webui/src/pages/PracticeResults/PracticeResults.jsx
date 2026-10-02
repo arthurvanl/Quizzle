@@ -1,14 +1,16 @@
 import {useState, useEffect, useContext} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import {BrandingContext} from "@/common/contexts/Branding";
+import {AuthContext} from "@/common/contexts/Auth";
 import {motion} from "framer-motion";
 import Button from "@/common/components/Button";
 import Dialog from "@/common/components/Dialog";
-import {postRequest} from "@/common/utils/RequestUtil.js";
+import {postRequest, deleteRequest} from "@/common/utils/RequestUtil.js";
 import {getCharacterEmoji} from "@/common/data/characters";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faUser, faCheck, faTimes, faMinus, faChartBar, faDownload, faHome} from "@fortawesome/free-solid-svg-icons";
+import {faUser, faCheck, faTimes, faMinus, faChartBar, faDownload, faHome, faListOl, faTrash} from "@fortawesome/free-solid-svg-icons";
 import AnalyticsTabs from "@/common/components/AnalyticsTabs";
+import QuizQuestions from "@/common/components/QuizQuestions";
 import {exportPracticeResultsToExcel} from "@/common/utils/ExcelExport";
 import {QUESTION_TYPES, SLIDER_MARGIN_CONFIG} from "@/common/constants/QuestionTypes.js";
 import "./styles.sass";
@@ -18,12 +20,14 @@ export const PracticeResults = () => {
     const {code} = useParams();
     const navigate = useNavigate();
     const {titleImg} = useContext(BrandingContext);
+    const {isAdmin} = useContext(AuthContext);
 
     const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [studentDetailsOpen, setStudentDetailsOpen] = useState(false);
     const [activeView, setActiveView] = useState('analytics');
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     useEffect(() => {
         loadResults();
@@ -58,12 +62,15 @@ export const PracticeResults = () => {
         });
     };
 
-    const formatDuration = (startDate, endDate) => {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        const diffMs = end - start;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        return diffDays;
+    const deleteQuiz = async () => {
+        try {
+            await deleteRequest(`/admin/quizzes/practice/${code}`);
+            toast.success('Quiz deleted.');
+            navigate('/admin');
+        } catch (error) {
+            toast.error(error.message || 'Failed to delete quiz.');
+            setDeleteDialogOpen(false);
+        }
     };
 
     const showStudentDetails = (studentName, attempts) => {
@@ -398,7 +405,8 @@ export const PracticeResults = () => {
 
     const viewTabs = [
         {id: 'analytics', title: 'Analytics', icon: faChartBar},
-        {id: 'students', title: 'Details', icon: faUser}
+        {id: 'students', title: 'Details', icon: faUser},
+        {id: 'questions', title: 'Questions', icon: faListOl}
     ];
 
     return (
@@ -428,10 +436,8 @@ export const PracticeResults = () => {
                         <div className="stat-label">Best score</div>
                     </div>
                     <div className="stat-card">
-                        <div className="stat-number">
-                            {formatDuration(results.meta.created, results.meta.expiry)} Tage
-                        </div>
-                        <div className="stat-label">Remaining</div>
+                        <div className="stat-number">{results.quiz?.questions?.length || 0}</div>
+                        <div className="stat-label">Questions</div>
                     </div>
                 </div>
 
@@ -456,6 +462,12 @@ export const PracticeResults = () => {
                                     quizData={results.quiz}
                                     isLiveQuiz={false}
                                 />
+                            </div>
+                        )}
+
+                        {activeView === 'questions' && (
+                            <div className="questions-section">
+                                <QuizQuestions quiz={results.quiz}/>
                             </div>
                         )}
 
@@ -522,8 +534,27 @@ export const PracticeResults = () => {
                             type="compact green"
                         />
                     )}
+                    {isAdmin && (
+                        <Button
+                            text="Delete quiz"
+                            icon={faTrash}
+                            onClick={() => setDeleteDialogOpen(true)}
+                            type="compact red"
+                        />
+                    )}
                 </div>
             </motion.div>
+
+            <Dialog
+                isOpen={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+                onConfirm={deleteQuiz}
+                title="Delete quiz"
+                confirmText="Delete"
+                cancelText="Cancel"
+            >
+                <p>This permanently deletes practice quiz <strong>{code}</strong> and all of its results.</p>
+            </Dialog>
 
             <Dialog
                 isOpen={studentDetailsOpen}

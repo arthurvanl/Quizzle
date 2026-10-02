@@ -58,7 +58,6 @@ const listQuizzes = () => {
                 type: 'practice',
                 ...summarizeQuiz(quizPath),
                 created: meta.created || fs.statSync(quizPath).mtime.toISOString(),
-                expiry: meta.expiry || null,
                 createdBy: meta.createdBy || null,
                 createdByName: meta.createdByName || null
             });
@@ -198,6 +197,39 @@ app.get('/quizzes', requireAdmin, (req, res) => {
     }));
 
     res.json({quizzes});
+});
+
+const resolveQuizPaths = (type, id) => {
+    if (type === 'live' && /^[a-z0-9]+$/i.test(id)) {
+        return {quizPath: path.join(quizzesFolder, `${id}.quizzle`), remove: [path.join(quizzesFolder, `${id}.quizzle`), path.join(quizzesFolder, `${id}.meta.json`)]};
+    }
+    if (type === 'practice' && /^[A-Z]{4}$/i.test(id)) {
+        const quizDir = path.join(practiceQuizzesFolder, id.toUpperCase());
+        return {quizPath: path.join(quizDir, 'quiz.quizzle'), remove: [quizDir]};
+    }
+    return null;
+};
+
+app.get('/quizzes/:type/:id', requireAdmin, (req, res) => {
+    const paths = resolveQuizPaths(req.params.type, req.params.id);
+    if (!paths || !fs.existsSync(paths.quizPath)) return res.status(404).json({message: 'Quiz not found.'});
+
+    try {
+        res.json({quiz: decompressQuiz(fs.readFileSync(paths.quizPath))});
+    } catch {
+        res.status(500).json({message: 'Quiz could not be read.'});
+    }
+});
+
+app.delete('/quizzes/:type/:id', requireAdmin, (req, res) => {
+    const paths = resolveQuizPaths(req.params.type, req.params.id);
+    if (!paths || !fs.existsSync(paths.quizPath)) return res.status(404).json({message: 'Quiz not found.'});
+
+    for (const target of paths.remove) {
+        fs.rmSync(target, {recursive: true, force: true});
+    }
+
+    res.json({success: true});
 });
 
 app.get('/users', requireAdmin, (req, res) => {

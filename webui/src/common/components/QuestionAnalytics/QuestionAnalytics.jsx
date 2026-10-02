@@ -34,9 +34,9 @@ const QuestionAnalytics = ({analyticsData}) => {
                             </div>
 
                             <div className="qa-counts">
-                                <span className="correct">{q.correctCount} richtig</span>
-                                {q.partialCount > 0 && <span className="partial">{q.partialCount} teilweise</span>}
-                                <span className="incorrect">{q.incorrectCount} falsch</span>
+                                <span className="correct">{q.correctCount} correct</span>
+                                {q.partialCount > 0 && <span className="partial">{q.partialCount} partial</span>}
+                                <span className="incorrect">{q.incorrectCount} incorrect</span>
                             </div>
                         </div>
                     );
