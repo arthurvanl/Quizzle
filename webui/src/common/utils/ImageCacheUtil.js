@@ -1,6 +1,26 @@
 const DB_NAME = 'QuizzleImageCache';
 const DB_VERSION = 1;
 const STORE_NAME = 'images';
+const MAX_DIMENSION = 1920;
+const COMPRESS_THRESHOLD = 1024 * 1024;
+// Server rejects b64 images over 10M chars (~7.5 MB raw)
+const LEGACY_THRESHOLD = 7 * 1024 * 1024;
+const PASSTHROUGH_TYPES = ['image/gif', 'image/svg+xml'];
+
+const compressImage = async (blob, threshold = COMPRESS_THRESHOLD) => {
+    if (blob.size <= threshold || PASSTHROUGH_TYPES.includes(blob.type)) return blob;
+
+    const bitmap = await createImageBitmap(blob);
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+
+    const compressed = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', 0.85));
+    return compressed && compressed.size < blob.size ? compressed : blob;
+};
 
 class ImageCacheUtil {
     constructor() {
@@ -41,11 +61,12 @@ class ImageCacheUtil {
 
         const suffix = imageType === 'answer' ? `_answer_${answerIndex}` : '';
         const imageId = `${questionUuid}${suffix}_${Date.now()}`;
-        const arrayBuffer = await file.arrayBuffer();
+        const image = await compressImage(file);
+        const arrayBuffer = await image.arrayBuffer();
 
         const imageData = {
             id: imageId, questionUuid: questionUuid, imageType: imageType, answerIndex: answerIndex,
-            filename: file.name, mimeType: file.type, size: file.size, data: arrayBuffer, timestamp: Date.now()
+            filename: file.name, mimeType: image.type, size: image.size, data: arrayBuffer, timestamp: Date.now()
         };
 
         return new Promise((resolve, reject) => {
@@ -71,11 +92,13 @@ class ImageCacheUtil {
             request.onsuccess = () => {
                 const result = request.result;
                 if (result) {
-                    const blob = new Blob([result.data], {type: result.mimeType});
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = () => reject(reader.error);
-                    reader.readAsDataURL(blob);
+                    // Images cached before compression existed may still be oversized
+                    compressImage(new Blob([result.data], {type: result.mimeType}), LEGACY_THRESHOLD).then(blob => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(reader.error);
+                        reader.readAsDataURL(blob);
+                    }).catch(reject);
                 } else {
                     resolve(null);
                 }
