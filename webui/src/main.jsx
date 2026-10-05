@@ -20,6 +20,7 @@ import EndingHost from "@/pages/EndingHost";
 import InGameClient from "@/pages/InGameClient";
 import PracticeResults from "@/pages/PracticeResults";
 import Admin from "@/pages/Admin";
+import MyQuizzes from "@/pages/MyQuizzes";
 import Credits from "@/pages/Credits";
 import RequireAuth from "@/common/components/RequireAuth";
 
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
             {path: '/practice/:practiceCode', element: <InGameClient />},
             {path: '/results/:code', element: <PracticeResults />},
             {path: '/admin', element: <Admin />},
+            {path: '/my-quizzes', element: <RequireAuth><MyQuizzes /></RequireAuth>},
             {path: '/credits', element: <Credits />}
         ]
     },
